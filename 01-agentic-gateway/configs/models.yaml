@@ -1,13 +1,13 @@
 models:
   small:
-    name: meta-llama/Llama-3.1-8B-Instruct
+    name: Qwen/Qwen2.5-7B-Instruct
     max_model_len: 4096
-    gpu_memory_utilization: 0.45
+    gpu_memory_utilization: 0.85
     quantization: null
-    description: "Fast model for simple queries"
+    description: "Fast model for simple queries (Apache 2.0, ungated)"
 
   large:
-    name: meta-llama/Llama-3.1-70B-Instruct-AWQ
+    name: Qwen/Qwen2.5-72B-Instruct-AWQ
     max_model_len: 4096
     gpu_memory_utilization: 0.50
     quantization: awq

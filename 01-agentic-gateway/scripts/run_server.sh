@@ -11,8 +11,8 @@ nvidia-smi > /dev/null 2>&1 || { echo "No GPU found."; exit 1; }
 # --- Option A: Single GPU (A10G 24GB) ---
 # Only run the small model. Good for development.
 if [ "${MODE:-single}" = "single" ]; then
-    echo "[1/2] Starting small model (8B) on port 8001..."
-    vllm serve meta-llama/Llama-3.1-8B-Instruct \
+    echo "[1/2] Starting small model (Qwen 7B) on port 8001..."
+    vllm serve Qwen/Qwen2.5-7B-Instruct \
         --port 8001 \
         --max-model-len 4096 \
         --gpu-memory-utilization 0.85 \
@@ -29,16 +29,16 @@ fi
 # --- Option B: Multi-GPU (A100 80GB or 2x A10G) ---
 # Run both small and large models.
 if [ "$MODE" = "multi" ]; then
-    echo "[1/3] Starting small model (8B) on port 8001..."
-    CUDA_VISIBLE_DEVICES=0 vllm serve meta-llama/Llama-3.1-8B-Instruct \
+    echo "[1/3] Starting small model (Qwen 7B) on port 8001..."
+    CUDA_VISIBLE_DEVICES=0 vllm serve Qwen/Qwen2.5-7B-Instruct \
         --port 8001 \
         --max-model-len 4096 \
         --gpu-memory-utilization 0.40 \
         &
     SMALL_PID=$!
 
-    echo "[2/3] Starting large model (70B AWQ) on port 8002..."
-    CUDA_VISIBLE_DEVICES=0 vllm serve hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4 \
+    echo "[2/3] Starting large model (Qwen 72B AWQ) on port 8002..."
+    CUDA_VISIBLE_DEVICES=0 vllm serve Qwen/Qwen2.5-72B-Instruct-AWQ \
         --port 8002 \
         --max-model-len 4096 \
         --gpu-memory-utilization 0.55 \
