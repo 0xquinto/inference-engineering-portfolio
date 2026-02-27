@@ -2,7 +2,7 @@
 Agentic Inference Gateway — FastAPI entrypoint.
 
 A multi-model inference gateway with intelligent routing for agentic workloads.
-Routes requests to small (8B) or large (70B) models based on complexity scoring.
+Routes requests to small (Qwen 7B) or large (Qwen 32B AWQ) models based on complexity scoring.
 
 Start:
     # Start vLLM servers first (see scripts/run_server.sh)
