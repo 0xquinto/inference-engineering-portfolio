@@ -152,14 +152,31 @@ async def chat_completions(request: Request):
 
     # Non-streaming response
     start = time.perf_counter()
-    result = await engine.generate(
-        model_key=model_key,
-        messages=messages,
-        max_tokens=max_tokens,
-        temperature=temperature,
-        tools=tools,
-        response_format=response_format,
-    )
+    try:
+        result = await engine.generate(
+            model_key=model_key,
+            messages=messages,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            tools=tools,
+            response_format=response_format,
+        )
+    except Exception as e:
+        total_ms = (time.perf_counter() - start) * 1000
+        return JSONResponse(
+            status_code=502,
+            content={
+                "error": {
+                    "message": f"Upstream model error: {str(e)[:300]}",
+                    "type": "upstream_error",
+                    "gateway": {
+                        "routed_to": model_key,
+                        "complexity_score": round(complexity.score, 3),
+                        "latency_ms": round(total_ms, 2),
+                    },
+                }
+            },
+        )
     total_ms = (time.perf_counter() - start) * 1000
 
     # Track cost

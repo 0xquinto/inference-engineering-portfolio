@@ -84,7 +84,23 @@ class InferenceEngine:
         start = time.perf_counter()
         resp = await self._client.post(url, json=payload)
         total_time = (time.perf_counter() - start) * 1000
-        resp.raise_for_status()
+
+        if resp.status_code != 200:
+            error_detail = resp.text[:500]
+            # If tools caused the error, retry without tools
+            if resp.status_code == 400 and tools and "tool" in error_detail.lower():
+                payload.pop("tools", None)
+                resp = await self._client.post(url, json=payload)
+                total_time = (time.perf_counter() - start) * 1000
+                if resp.status_code != 200:
+                    raise httpx.HTTPStatusError(
+                        f"vLLM error: {resp.text[:200]}", request=resp.request, response=resp
+                    )
+            else:
+                raise httpx.HTTPStatusError(
+                    f"vLLM error: {error_detail}", request=resp.request, response=resp
+                )
+
         data = resp.json()
 
         choice = data["choices"][0]
