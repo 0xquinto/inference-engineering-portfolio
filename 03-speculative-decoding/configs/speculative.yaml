@@ -1,0 +1,20 @@
+# Speculative decoding configurations to benchmark
+experiments:
+  - name: "llama-8b-draft-70b-target"
+    draft_model: "meta-llama/Llama-3.1-8B-Instruct"
+    target_model: "meta-llama/Llama-3.1-70B-Instruct-AWQ"
+    num_speculative_tokens: [3, 5, 7, 10]
+    description: "Same family, different sizes — best acceptance rate expected"
+
+  - name: "tinyllama-draft-8b-target"
+    draft_model: "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    target_model: "meta-llama/Llama-3.1-8B-Instruct"
+    num_speculative_tokens: [3, 5, 7]
+    description: "Tiny draft model — tests minimum viable draft size"
+
+# Metrics to collect per experiment
+metrics:
+  - acceptance_rate_per_position   # Does position 1 accept more than position 5?
+  - overall_speedup                # vs standard autoregressive
+  - ttft_comparison                # First token latency impact
+  - gpu_utilization_during_phases  # Draft vs verify GPU usage

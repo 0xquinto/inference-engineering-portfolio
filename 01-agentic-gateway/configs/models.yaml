@@ -1,0 +1,23 @@
+models:
+  small:
+    name: meta-llama/Llama-3.1-8B-Instruct
+    max_model_len: 4096
+    gpu_memory_utilization: 0.45
+    quantization: null
+    description: "Fast model for simple queries"
+
+  large:
+    name: meta-llama/Llama-3.1-70B-Instruct-AWQ
+    max_model_len: 4096
+    gpu_memory_utilization: 0.50
+    quantization: awq
+    description: "High-quality model for complex reasoning"
+
+# Cost estimates (per 1M tokens)
+costs:
+  small:
+    input: 0.10
+    output: 0.10
+  large:
+    input: 0.80
+    output: 0.80

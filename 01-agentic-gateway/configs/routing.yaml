@@ -1,0 +1,35 @@
+routing:
+  strategy: complexity_based
+
+  # Requests below this complexity score go to the small model
+  complexity_threshold: 0.6
+
+  # Heuristic signals for complexity scoring
+  signals:
+    - name: message_length
+      weight: 0.3
+      thresholds:
+        low: 50      # tokens
+        high: 200
+
+    - name: keyword_complexity
+      weight: 0.4
+      high_complexity_keywords:
+        - "analyze"
+        - "compare"
+        - "explain in detail"
+        - "write code"
+        - "debug"
+        - "refactor"
+        - "multi-step"
+
+    - name: tool_use_requested
+      weight: 0.3
+      description: "If the request includes tool definitions, route to large"
+
+  # Override rules
+  overrides:
+    - condition: "model explicitly requested"
+      action: "use requested model"
+    - condition: "json_mode or structured output"
+      action: "prefer large model"

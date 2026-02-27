@@ -1,0 +1,8 @@
+vllm>=0.7.0
+sglang[all]>=0.4.0
+httpx>=0.28.0
+pandas>=2.2.0
+matplotlib>=3.9.0
+plotly>=5.24.0
+pyyaml>=6.0
+tqdm>=4.67.0

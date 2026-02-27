@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Model weights (don't commit these)
+*.bin
+*.safetensors
+*.gguf
+models/
+
+# Benchmark results (commit summaries, not raw data)
+**/results/*.json
+**/results/*.csv
+!**/results/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

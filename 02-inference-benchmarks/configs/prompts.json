@@ -1,0 +1,26 @@
+{
+  "short": [
+    {"prompt": "What is 2 + 2?", "expected_tokens": 10},
+    {"prompt": "Translate 'hello' to Spanish.", "expected_tokens": 10},
+    {"prompt": "Is Python interpreted or compiled?", "expected_tokens": 20},
+    {"prompt": "Name three primary colors.", "expected_tokens": 15},
+    {"prompt": "What does HTTP stand for?", "expected_tokens": 15}
+  ],
+  "medium": [
+    {"prompt": "Explain the difference between TCP and UDP in 2-3 sentences.", "expected_tokens": 80},
+    {"prompt": "Write a Python function to check if a string is a palindrome.", "expected_tokens": 100},
+    {"prompt": "Summarize the concept of MapReduce for a junior engineer.", "expected_tokens": 120},
+    {"prompt": "Compare REST and GraphQL APIs. Give pros and cons of each.", "expected_tokens": 150},
+    {"prompt": "Explain how a hash table works, including collision handling.", "expected_tokens": 120}
+  ],
+  "long": [
+    {"prompt": "Write a detailed technical design document for a URL shortener service. Include system architecture, database schema, API design, and scaling considerations.", "expected_tokens": 500},
+    {"prompt": "Explain the transformer architecture from scratch. Cover attention mechanisms, positional encoding, and how training works. Include examples.", "expected_tokens": 600},
+    {"prompt": "Design a real-time chat application. Describe the architecture, message delivery guarantees, presence system, and how you would handle 1 million concurrent users.", "expected_tokens": 500}
+  ],
+  "code": [
+    {"prompt": "Implement a binary search tree in Python with insert, search, and delete operations. Include type hints.", "expected_tokens": 300},
+    {"prompt": "Write a Python async HTTP client that retries failed requests with exponential backoff. Handle timeouts and connection errors.", "expected_tokens": 250},
+    {"prompt": "Implement a simple LRU cache in Python without using functools. Support get() and put() operations in O(1) time.", "expected_tokens": 250}
+  ]
+}
