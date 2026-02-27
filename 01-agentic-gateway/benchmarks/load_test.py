@@ -32,18 +32,26 @@ SIMPLE_PROMPTS = [
 
 COMPLEX_PROMPTS = [
     {
-        "messages": [{"role": "user", "content": "Analyze the time and space complexity of quicksort vs mergesort. Compare their performance characteristics in detail with examples."}],
+        "messages": [{"role": "user", "content": "Analyze the time and space complexity of quicksort vs mergesort. Compare their performance characteristics in detail with examples. Write code to benchmark both algorithms step by step."}],
+        "tools": [{"type": "function", "function": {"name": "run_benchmark", "description": "Run a benchmark", "parameters": {"type": "object", "properties": {"code": {"type": "string"}}}}}],
+        "response_format": {"type": "json_object"},
     },
     {
-        "messages": [{"role": "user", "content": "Write code to implement a rate limiter using the token bucket algorithm in Python. Include thread safety."}],
+        "messages": [{"role": "user", "content": "Write code to implement a rate limiter using the token bucket algorithm in Python. Debug the thread safety issues and explain in detail how to optimize for high throughput."}],
+        "tools": [{"type": "function", "function": {"name": "execute_code", "description": "Execute Python code", "parameters": {"type": "object", "properties": {"code": {"type": "string"}}}}}],
+        "response_format": {"type": "json_object"},
     },
     {
         "messages": [
-            {"role": "user", "content": "Debug this: my async Python web server is leaking memory under load. What are the most likely causes and how do I diagnose them step by step?"},
+            {"role": "user", "content": "Debug this: my async Python web server is leaking memory under load. Analyze the most likely causes and write code to diagnose them step by step. Design a monitoring solution."},
         ],
+        "tools": [{"type": "function", "function": {"name": "profile_memory", "description": "Profile memory usage", "parameters": {"type": "object", "properties": {"pid": {"type": "integer"}}}}}],
+        "response_format": {"type": "json_object"},
     },
     {
-        "messages": [{"role": "user", "content": "Design a distributed caching system. Explain the architecture, consistency model, and eviction strategies."}],
+        "messages": [{"role": "user", "content": "Design a distributed caching system. Analyze the architecture tradeoffs, implement the eviction strategies, and write code to evaluate consistency models step by step."}],
+        "tools": [{"type": "function", "function": {"name": "deploy_service", "description": "Deploy a service", "parameters": {"type": "object", "properties": {"config": {"type": "string"}}}}}],
+        "response_format": {"type": "json_object"},
     },
 ]
 

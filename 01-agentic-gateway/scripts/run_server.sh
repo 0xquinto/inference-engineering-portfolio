@@ -33,16 +33,18 @@ if [ "$MODE" = "multi" ]; then
     CUDA_VISIBLE_DEVICES=0 vllm serve Qwen/Qwen2.5-7B-Instruct \
         --port 8001 \
         --max-model-len 4096 \
-        --gpu-memory-utilization 0.40 \
+        --gpu-memory-utilization 0.35 \
+        --enable-auto-tool-choice --tool-call-parser hermes \
         &
     SMALL_PID=$!
 
-    echo "[2/3] Starting large model (Qwen 72B AWQ) on port 8002..."
-    CUDA_VISIBLE_DEVICES=0 vllm serve Qwen/Qwen2.5-72B-Instruct-AWQ \
+    echo "[2/3] Starting large model (Qwen 32B AWQ) on port 8002..."
+    CUDA_VISIBLE_DEVICES=0 vllm serve Qwen/Qwen2.5-32B-Instruct-AWQ \
         --port 8002 \
         --max-model-len 4096 \
         --gpu-memory-utilization 0.55 \
         --quantization awq \
+        --enable-auto-tool-choice --tool-call-parser hermes \
         &
     LARGE_PID=$!
 

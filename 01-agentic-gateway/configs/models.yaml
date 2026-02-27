@@ -2,16 +2,16 @@ models:
   small:
     name: Qwen/Qwen2.5-7B-Instruct
     max_model_len: 4096
-    gpu_memory_utilization: 0.85
+    gpu_memory_utilization: 0.35
     quantization: null
     description: "Fast model for simple queries (Apache 2.0, ungated)"
 
   large:
-    name: Qwen/Qwen2.5-72B-Instruct-AWQ
+    name: Qwen/Qwen2.5-32B-Instruct-AWQ
     max_model_len: 4096
-    gpu_memory_utilization: 0.50
+    gpu_memory_utilization: 0.55
     quantization: awq
-    description: "High-quality model for complex reasoning"
+    description: "High-quality model for complex reasoning (AWQ INT4)"
 
 # Cost estimates (per 1M tokens)
 costs:
