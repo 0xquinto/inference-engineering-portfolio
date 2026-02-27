@@ -1,121 +1,135 @@
-# 02 — Inference Stack Benchmarks
+# Inference Stack Benchmarks
 
-Rigorous, reproducible comparison of vLLM, SGLang, and TGI serving the same model.
+Rigorous, reproducible comparison of **vLLM**, **SGLang**, and **TensorRT-LLM** serving Llama 4 Scout 17B-16E (MoE) on a single NVIDIA H100 80GB GPU.
 
-## Why This Project
-
-Companies need engineers who can evaluate and choose inference stacks — not just use them.
-This project shows you think in tradeoffs and measure before deciding.
-
-Maps directly to roles at: NVIDIA, AMD (SGLang team), any infra team choosing a stack.
-
-## What You're Measuring
+## Architecture
 
 ```
-Same model (Llama 3.1 8B) across 3 engines:
-
-┌──────────┐  ┌──────────┐  ┌──────────┐
-│   vLLM   │  │  SGLang  │  │   TGI    │
-│  v0.11+  │  │  v0.4+   │  │  v2.x    │
-└────┬─────┘  └────┬─────┘  └────┬─────┘
-     │             │             │
-     └─────────────┼─────────────┘
-                   │
-          ┌────────┴────────┐
-          │  Benchmark Suite │
-          │  (same prompts,  │
-          │   same hardware) │
-          └─────────────────┘
+                    ┌─────────────────────────────────┐
+                    │         Benchmark Suite          │
+                    │  async httpx · streaming SSE     │
+                    │  concurrency: 1, 10, 50, 100    │
+                    └──────────┬──────────────────────┘
+                               │
+            ┌──────────────────┼──────────────────┐
+            │                  │                  │
+     ┌──────┴──────┐   ┌──────┴──────┐   ┌──────┴──────┐
+     │    vLLM     │   │   SGLang    │   │ TensorRT-LLM│
+     │   v0.16+    │   │   v0.5+     │   │  v1.3+ (Docker)
+     │  port 8001  │   │  port 8002  │   │  port 8003  │
+     └──────┬──────┘   └──────┬──────┘   └──────┬──────┘
+            │                  │                  │
+            └──────────────────┼──────────────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    │   NVIDIA H100 SXM   │
+                    │      80GB HBM3      │
+                    └─────────────────────┘
 ```
 
-## Metrics to Capture
+## Model
 
-| Metric | What it means |
-|--------|---------------|
-| TTFT (Time to First Token) | How fast the model starts responding |
-| Token throughput (tok/s) | Generation speed |
-| Throughput under load | Requests/sec at 1, 10, 50, 100 concurrent |
-| Memory usage | VRAM consumed at idle and under load |
-| Quantization impact | Same metrics with AWQ vs FP16 |
+**Llama 4 Scout 17B-16E-Instruct** — Meta's Mixture-of-Experts model with 16 experts, ~109B total parameters but only ~17B active per forward pass. Chosen because MoE models are the dominant architecture for production inference and stress-test engine scheduling in ways dense models don't.
 
-## Directory Structure
+## Metrics
+
+| Metric | Description |
+|--------|-------------|
+| **TTFT** | Time to first token (ms) — measures prefill latency |
+| **TPOT** | Time per output token (ms) — measures decode speed |
+| **Throughput** | Tokens/sec at each concurrency level |
+| **P50 / P95 / P99** | Latency percentiles under load |
+| **GPU Memory** | VRAM usage (MB) via nvidia-smi |
+
+## How It Works
+
+1. **Runner interface** — Each engine implements `BenchmarkRunner` (start server, health check, send request, stop server)
+2. **Streaming metrics** — Requests use SSE streaming to measure TTFT separately from total latency
+3. **Concurrent load** — `asyncio.Semaphore` controls concurrency; `asyncio.gather` fires requests in parallel
+4. **Prompt categories** — Short, medium, long, and code prompts test different workload profiles
+5. **Results** — Raw JSON with per-request metrics, aggregated into latency/throughput summaries and matplotlib charts
+
+## Project Structure
 
 ```
 02-inference-benchmarks/
 ├── src/
 │   ├── runners/
-│   │   ├── __init__.py
-│   │   ├── base.py             # Abstract benchmark runner
-│   │   ├── vllm_runner.py      # vLLM-specific setup and teardown
-│   │   ├── sglang_runner.py    # SGLang-specific setup and teardown
-│   │   └── tgi_runner.py       # TGI-specific setup and teardown
+│   │   ├── base.py              # Abstract BenchmarkRunner + RequestConfig + BenchmarkResult
+│   │   ├── vllm_runner.py       # vLLM subprocess runner
+│   │   ├── sglang_runner.py     # SGLang subprocess runner
+│   │   └── trtllm_runner.py     # TensorRT-LLM Docker runner
 │   ├── metrics/
-│   │   ├── __init__.py
-│   │   ├── latency.py          # TTFT, token latency, P50/P95/P99
-│   │   ├── throughput.py       # Concurrent request throughput
-│   │   └── memory.py           # GPU memory profiling
+│   │   ├── latency.py           # LatencyTracker — TTFT, TPOT, percentiles
+│   │   ├── throughput.py        # ThroughputCalculator — tokens/sec
+│   │   └── memory.py            # nvidia-smi GPU memory parsing
 │   ├── visualization/
-│   │   ├── __init__.py
-│   │   └── plots.py            # Matplotlib/plotly charts
-│   └── main.py                 # CLI entrypoint
+│   │   └── plots.py             # Latency bar charts, throughput scaling curves
+│   └── main.py                  # CLI entrypoint with engine orchestration
 ├── configs/
-│   ├── prompts.json            # Standard prompt dataset (short, medium, long)
-│   ├── vllm.yaml
-│   ├── sglang.yaml
-│   └── tgi.yaml
-├── results/                    # Raw benchmark outputs (gitignored, samples committed)
-│   └── .gitkeep
+│   ├── engines.yaml             # Engine ports, model config, benchmark params
+│   └── prompts.json             # 16 prompts across 4 categories
 ├── scripts/
-│   ├── setup_all_engines.sh    # Install vLLM + SGLang + TGI
-│   ├── run_benchmarks.sh       # Run full suite
-│   └── generate_report.py      # Produce markdown report from results
-├── tests/
-│   └── test_metrics.py
+│   ├── setup_engines.sh         # Install engines + download model on GPU box
+│   └── run_benchmarks.sh        # Run full benchmark suite
+├── tests/                       # 16 unit tests (metrics, runners, CLI, visualization)
+├── results/                     # Benchmark JSON + charts (generated)
 └── requirements.txt
 ```
 
-## Where to Start
+## Quick Start
 
-### Day 1: Setup all three engines
+### On a GPU machine (RunPod H100 recommended)
+
 ```bash
-# vLLM
-pip install vllm
+# 1. Clone and enter project
+git clone https://github.com/0xquinto/inference-engineering-portfolio.git
+cd inference-engineering-portfolio/02-inference-benchmarks
 
-# SGLang
-pip install "sglang[all]"
+# 2. Setup engines and download model
+bash scripts/setup_engines.sh
 
-# TGI (Docker)
-docker pull ghcr.io/huggingface/text-generation-inference:latest
+# 3. Run benchmarks (one engine at a time to avoid OOM)
+bash scripts/run_benchmarks.sh vllm
+bash scripts/run_benchmarks.sh sglang
+bash scripts/run_benchmarks.sh tensorrt-llm
+
+# 4. Generate comparison charts
+python -c "from src.visualization import generate_all_plots; import glob; generate_all_plots(glob.glob('results/benchmark_*.json')[0])"
 ```
 
-### Day 2: Build the benchmark harness
-- `src/runners/base.py` — define the interface: start_server(), send_request(), measure()
-- Implement for vLLM first (you already know it from project 01)
-- Use async httpx for concurrent request sending
+### Local development (no GPU needed)
 
-### Day 3: Run benchmarks + collect data
-- Standard prompt set: 50 short (< 50 tokens), 50 medium (50-200), 50 long (200+)
-- Concurrency levels: 1, 10, 50, 100
-- With and without AWQ quantization
-- Save raw results as JSON
+```bash
+pip install -r requirements.txt
+python -m pytest tests/ -v
+python -m src.main --list-engines
+```
 
-### Day 4-5: Visualize and write up
-- Latency distribution charts (box plots per engine)
-- Throughput scaling curves (req/s vs concurrency)
-- Memory usage comparison
-- Write a clear analysis: "When to choose X over Y"
+## Running Tests
 
-## Prompt Dataset
+```bash
+python -m pytest tests/ -v
+```
 
-Create `configs/prompts.json` with realistic workloads:
-- **Short**: "What is 2+2?", classification tasks
-- **Medium**: "Summarize this paragraph...", extraction tasks
-- **Long**: "Write a detailed analysis of...", generation tasks
-- **Code**: "Implement a function that...", code generation
+```
+tests/test_main.py          — 2 tests (CLI help, engine listing)
+tests/test_metrics.py       — 6 tests (latency percentiles, throughput, GPU memory parsing)
+tests/test_runner_init.py   — 3 tests (all runners instantiate correctly)
+tests/test_runners.py       — 3 tests (dataclass fields, config defaults, ABC enforcement)
+tests/test_plots.py         — 2 tests (data preparation for charts)
+────────────────────────────────────────────────────────
+Total: 16 passed
+```
 
-## Success Metrics (what to show in your writeup)
+## Design Decisions
 
-- Clean reproducible benchmark with exact hardware specs
-- Clear winner analysis per workload type
-- Quantization impact quantified (e.g., "AWQ gives 1.8x throughput at 2% quality loss")
-- Actionable recommendation: "Use X for latency-sensitive, Y for throughput"
+**Why these 3 engines?** vLLM (PagedAttention, most popular), SGLang (RadixAttention, fastest for structured output), TensorRT-LLM (NVIDIA's optimized runtime). These are the three stacks teams actually evaluate when choosing inference infrastructure.
+
+**Why Llama 4 Scout (MoE)?** MoE models are becoming the default for production (GPT-4, Mixtral, DBRX). They stress-test engine scheduling, expert routing, and memory management differently than dense models — revealing performance gaps that matter in production.
+
+**Why H100?** It's the standard GPU for production inference. Benchmarking on consumer hardware would produce misleading results that don't transfer to real deployments.
+
+**Why streaming?** TTFT matters more than total latency for user-facing applications. Streaming SSE lets us measure prefill and decode phases independently, which is how production systems are evaluated.
+
+**Why async httpx with semaphore?** Simulates realistic concurrent load without the overhead of spawning threads. The semaphore pattern matches how load balancers dispatch requests to inference servers.

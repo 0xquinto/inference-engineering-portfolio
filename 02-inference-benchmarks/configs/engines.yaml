@@ -1,0 +1,43 @@
+model:
+  name: meta-llama/Llama-4-Scout-17B-16E-Instruct
+  type: moe
+  active_params: 17B
+  total_params: 109B
+
+engines:
+  vllm:
+    port: 8001
+    extra_args:
+      - "--max-model-len"
+      - "4096"
+      - "--dtype"
+      - "auto"
+      - "--enable-auto-tool-choice"
+      - "--tool-call-parser"
+      - "llama4"
+
+  sglang:
+    port: 8002
+    extra_args:
+      - "--model-path"
+      - "meta-llama/Llama-4-Scout-17B-16E-Instruct"
+      - "--port"
+      - "8002"
+      - "--dtype"
+      - "auto"
+
+  tensorrt_llm:
+    port: 8003
+    docker_image: "nvcr.io/nvidia/tritonserver:25.02-trtllm-python-py3"
+    extra_args: []
+
+benchmark:
+  concurrency_levels: [1, 10, 50, 100]
+  warmup_requests: 5
+  requests_per_prompt: 3
+  max_tokens: 256
+  temperature: 0.0
+
+hardware:
+  gpu: "NVIDIA H100 80GB HBM3"
+  provider: "RunPod"
