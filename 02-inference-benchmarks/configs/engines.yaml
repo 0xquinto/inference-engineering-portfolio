@@ -1,5 +1,5 @@
 model:
-  name: nvidia/Llama-4-Scout-Instruct-FP8
+  name: nvidia/Llama-4-Scout-17B-16E-Instruct-FP8
   type: moe
   active_params: 17B
   total_params: 109B
@@ -20,7 +20,7 @@ engines:
     port: 8020
     extra_args:
       - "--model-path"
-      - "nvidia/Llama-4-Scout-Instruct-FP8"
+      - "nvidia/Llama-4-Scout-17B-16E-Instruct-FP8"
       - "--port"
       - "8020"
       - "--kv-cache-dtype"
