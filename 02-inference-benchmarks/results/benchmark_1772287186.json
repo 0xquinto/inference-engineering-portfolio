@@ -1,0 +1,308 @@
+{
+  "sglang": [
+    {
+      "engine": "sglang",
+      "category": "short",
+      "concurrency": 1,
+      "latency": {
+        "count": 15,
+        "p50": 269.04,
+        "p95": 1388.98,
+        "p99": 1388.98,
+        "mean": 584.9633333333334
+      },
+      "throughput": {
+        "total_requests": 15,
+        "total_tokens": 822,
+        "avg_tokens_per_sec": 93.68,
+        "total_time_s": 8.77
+      },
+      "gpu_memory_mb": 134380
+    },
+    {
+      "engine": "sglang",
+      "category": "short",
+      "concurrency": 10,
+      "latency": {
+        "count": 15,
+        "p50": 1166.4,
+        "p95": 2781.57,
+        "p99": 2781.57,
+        "mean": 1342.8993333333333
+      },
+      "throughput": {
+        "total_requests": 15,
+        "total_tokens": 822,
+        "avg_tokens_per_sec": 40.81,
+        "total_time_s": 20.14
+      },
+      "gpu_memory_mb": 134400
+    },
+    {
+      "engine": "sglang",
+      "category": "short",
+      "concurrency": 50,
+      "latency": {
+        "count": 15,
+        "p50": 881.32,
+        "p95": 2838.94,
+        "p99": 2838.94,
+        "mean": 1207.4393333333333
+      },
+      "throughput": {
+        "total_requests": 15,
+        "total_tokens": 963,
+        "avg_tokens_per_sec": 53.17,
+        "total_time_s": 18.11
+      },
+      "gpu_memory_mb": 134400
+    },
+    {
+      "engine": "sglang",
+      "category": "short",
+      "concurrency": 100,
+      "latency": {
+        "count": 15,
+        "p50": 884.03,
+        "p95": 2840.4,
+        "p99": 2840.4,
+        "mean": 1195.592
+      },
+      "throughput": {
+        "total_requests": 15,
+        "total_tokens": 963,
+        "avg_tokens_per_sec": 53.7,
+        "total_time_s": 17.93
+      },
+      "gpu_memory_mb": 134400
+    },
+    {
+      "engine": "sglang",
+      "category": "medium",
+      "concurrency": 1,
+      "latency": {
+        "count": 15,
+        "p50": 2410.99,
+        "p95": 2422.95,
+        "p99": 2422.95,
+        "mean": 2102.08
+      },
+      "throughput": {
+        "total_requests": 15,
+        "total_tokens": 3351,
+        "avg_tokens_per_sec": 106.28,
+        "total_time_s": 31.53
+      },
+      "gpu_memory_mb": 134400
+    },
+    {
+      "engine": "sglang",
+      "category": "medium",
+      "concurrency": 10,
+      "latency": {
+        "count": 15,
+        "p50": 4163.47,
+        "p95": 4484.02,
+        "p99": 4484.02,
+        "mean": 3521.2693333333336
+      },
+      "throughput": {
+        "total_requests": 15,
+        "total_tokens": 3361,
+        "avg_tokens_per_sec": 63.63,
+        "total_time_s": 52.82
+      },
+      "gpu_memory_mb": 134400
+    },
+    {
+      "engine": "sglang",
+      "category": "medium",
+      "concurrency": 50,
+      "latency": {
+        "count": 15,
+        "p50": 3831.36,
+        "p95": 4218.08,
+        "p99": 4218.08,
+        "mean": 3501.7906666666668
+      },
+      "throughput": {
+        "total_requests": 15,
+        "total_tokens": 3378,
+        "avg_tokens_per_sec": 64.31,
+        "total_time_s": 52.53
+      },
+      "gpu_memory_mb": 134400
+    },
+    {
+      "engine": "sglang",
+      "category": "medium",
+      "concurrency": 100,
+      "latency": {
+        "count": 15,
+        "p50": 3773.36,
+        "p95": 4143.05,
+        "p99": 4143.05,
+        "mean": 3448.6753333333336
+      },
+      "throughput": {
+        "total_requests": 15,
+        "total_tokens": 3378,
+        "avg_tokens_per_sec": 65.3,
+        "total_time_s": 51.73
+      },
+      "gpu_memory_mb": 134400
+    },
+    {
+      "engine": "sglang",
+      "category": "long",
+      "concurrency": 1,
+      "latency": {
+        "count": 9,
+        "p50": 2413.61,
+        "p95": 2427.45,
+        "p99": 2427.45,
+        "mean": 2416.1444444444446
+      },
+      "throughput": {
+        "total_requests": 9,
+        "total_tokens": 2322,
+        "avg_tokens_per_sec": 106.78,
+        "total_time_s": 21.75
+      },
+      "gpu_memory_mb": 134422
+    },
+    {
+      "engine": "sglang",
+      "category": "long",
+      "concurrency": 10,
+      "latency": {
+        "count": 9,
+        "p50": 3816.35,
+        "p95": 3996.81,
+        "p99": 3996.81,
+        "mean": 3811.987777777778
+      },
+      "throughput": {
+        "total_requests": 9,
+        "total_tokens": 2322,
+        "avg_tokens_per_sec": 67.68,
+        "total_time_s": 34.31
+      },
+      "gpu_memory_mb": 134422
+    },
+    {
+      "engine": "sglang",
+      "category": "long",
+      "concurrency": 50,
+      "latency": {
+        "count": 9,
+        "p50": 3771.72,
+        "p95": 3951.16,
+        "p99": 3951.16,
+        "mean": 3770.1744444444444
+      },
+      "throughput": {
+        "total_requests": 9,
+        "total_tokens": 2322,
+        "avg_tokens_per_sec": 68.43,
+        "total_time_s": 33.93
+      },
+      "gpu_memory_mb": 134422
+    },
+    {
+      "engine": "sglang",
+      "category": "long",
+      "concurrency": 100,
+      "latency": {
+        "count": 9,
+        "p50": 3771.01,
+        "p95": 3951.77,
+        "p99": 3951.77,
+        "mean": 3770.5033333333336
+      },
+      "throughput": {
+        "total_requests": 9,
+        "total_tokens": 2322,
+        "avg_tokens_per_sec": 68.43,
+        "total_time_s": 33.93
+      },
+      "gpu_memory_mb": 134422
+    },
+    {
+      "engine": "sglang",
+      "category": "code",
+      "concurrency": 1,
+      "latency": {
+        "count": 9,
+        "p50": 2412.55,
+        "p95": 2421.1,
+        "p99": 2421.1,
+        "mean": 2413.6066666666666
+      },
+      "throughput": {
+        "total_requests": 9,
+        "total_tokens": 2322,
+        "avg_tokens_per_sec": 106.89,
+        "total_time_s": 21.72
+      },
+      "gpu_memory_mb": 134422
+    },
+    {
+      "engine": "sglang",
+      "category": "code",
+      "concurrency": 10,
+      "latency": {
+        "count": 9,
+        "p50": 3725.31,
+        "p95": 3908.92,
+        "p99": 3908.92,
+        "mean": 3725.281111111111
+      },
+      "throughput": {
+        "total_requests": 9,
+        "total_tokens": 2322,
+        "avg_tokens_per_sec": 69.26,
+        "total_time_s": 33.53
+      },
+      "gpu_memory_mb": 134422
+    },
+    {
+      "engine": "sglang",
+      "category": "code",
+      "concurrency": 50,
+      "latency": {
+        "count": 9,
+        "p50": 3701.43,
+        "p95": 3882.05,
+        "p99": 3882.05,
+        "mean": 3699.9
+      },
+      "throughput": {
+        "total_requests": 9,
+        "total_tokens": 2322,
+        "avg_tokens_per_sec": 69.73,
+        "total_time_s": 33.3
+      },
+      "gpu_memory_mb": 134422
+    },
+    {
+      "engine": "sglang",
+      "category": "code",
+      "concurrency": 100,
+      "latency": {
+        "count": 9,
+        "p50": 3621.57,
+        "p95": 3801.26,
+        "p99": 3801.26,
+        "mean": 3621.1222222222223
+      },
+      "throughput": {
+        "total_requests": 9,
+        "total_tokens": 2322,
+        "avg_tokens_per_sec": 71.25,
+        "total_time_s": 32.59
+      },
+      "gpu_memory_mb": 134422
+    }
+  ]
+}
