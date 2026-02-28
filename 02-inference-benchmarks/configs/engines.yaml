@@ -19,12 +19,8 @@ engines:
   sglang:
     port: 8020
     extra_args:
-      - "--model-path"
-      - "RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic"
-      - "--port"
-      - "8020"
       - "--kv-cache-dtype"
-      - "fp8"
+      - "fp8_e4m3"
 
   tensorrt_llm:
     port: 8030
