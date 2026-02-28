@@ -23,7 +23,7 @@ class SglangRunner(BenchmarkRunner):
             *(extra_args or []),
         ]
         self._process = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         )
         await self.wait_for_server()
 

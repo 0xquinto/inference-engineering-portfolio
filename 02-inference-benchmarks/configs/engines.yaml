@@ -21,6 +21,10 @@ engines:
     extra_args:
       - "--kv-cache-dtype"
       - "fp8_e4m3"
+      - "--mem-fraction-static"
+      - "0.15"
+      - "--chunked-prefill-size"
+      - "4096"
 
   tensorrt_llm:
     port: 8030
