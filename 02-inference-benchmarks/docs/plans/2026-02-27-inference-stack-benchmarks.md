@@ -58,84 +58,15 @@
 
 ---
 
-## Remaining: Task 10 — Run benchmarks on H200 GPU
+## Task 10: Run benchmarks on H200 GPU — DONE
 
-### Step 1: Create H200 pod and setup environment
-
-```bash
-# Delete old H100 pod
-runpodctl pod delete 4umbo2vqiv7prk
-
-# Create H200 pod
-runpodctl pod create --name bench-h200 \
-  --gpu-id "NVIDIA H200" --gpu-count 1 \
-  --image runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 \
-  --volume-in-gb 500 \
-  --ports "22/tcp,8010/http,8020/http,8030/http"
-```
-
-### Step 2: SSH in and prepare
-
-```bash
-# Clone repo
-cd /workspace
-git clone https://github.com/0xquinto/inference-engineering-portfolio.git
-cd inference-engineering-portfolio/02-inference-benchmarks
-
-# Setup HF cache on volume (container disk is only 50GB)
-mkdir -p /workspace/hf_cache
-ln -sf /workspace/hf_cache /root/.cache/huggingface
-
-# Login to HF
-pip install huggingface_hub
-python -c "from huggingface_hub import login; login(token='<YOUR_HF_TOKEN>')"
-
-# Install shared deps
-pip install -r requirements.txt
-```
-
-### Step 3: Download FP8 model (~109GB)
-
-```bash
-export TMPDIR=/workspace/tmp && mkdir -p $TMPDIR
-python -c "from huggingface_hub import snapshot_download; snapshot_download('nvidia/Llama-4-Scout-Instruct-FP8')"
-```
-
-### Step 4: Install engine venvs (separate due to flashinfer conflict)
-
-```bash
-# vLLM venv
-python -m venv /workspace/venvs/vllm --system-site-packages
-/workspace/venvs/vllm/bin/pip install 'vllm>=0.16' httpx pyyaml
-
-# SGLang venv
-python -m venv /workspace/venvs/sglang --system-site-packages
-/workspace/venvs/sglang/bin/pip install 'sglang[all]' httpx pyyaml
-```
-
-### Step 5: Run benchmarks (one engine at a time)
-
-```bash
-bash scripts/run_benchmarks.sh vllm
-bash scripts/run_benchmarks.sh sglang
-# TRT-LLM if Docker available:
-bash scripts/run_benchmarks.sh tensorrt-llm
-```
-
-### Step 6: Generate plots and save results
-
-```bash
-python -c "from src.visualization import generate_all_plots; import glob; generate_all_plots(glob.glob('results/benchmark_*.json')[0])"
-git add results/
-git commit -m "data: add benchmark results from H200 GPU"
-git push
-```
-
-### Step 7: Stop the pod
-
-```bash
-runpodctl pod stop <id>
-```
+- **Pod:** bench-h200 (lzhqms1jtuukso), H200 SXM 141GB, $3.59/hr
+- **Model:** RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic (ungated FP8)
+- **vLLM 0.16.0:** 83 tok/s (c=1), 49 tok/s (c=100)
+- **SGLang 0.5.9:** 103 tok/s (c=1), 65 tok/s (c=100)
+- **Winner:** SGLang by 25-35% across all concurrency levels
+- GPU memory: vLLM 131GB, SGLang 134GB (of 143GB)
+- Results: `results/benchmark_combined.json`, 5 charts in `results/`
 
 ---
 
@@ -147,7 +78,12 @@ runpodctl pod stop <id>
 - **HF fine-grained tokens:** Don't work for gated repos. Use READ tokens.
 - **bitsandbytes int4 broken:** Shape mismatch with Llama 4 MoE in vLLM 0.16. Use pre-quantized FP8 model instead.
 - **Model size:** 109B params = ~218GB BF16, ~109GB FP8. H100 (80GB) too small. H200 (141GB) fits FP8 + KV cache.
+- **nvidia FP8 model is gated separately:** Use RedHatAI FP8 variant (ungated, same quality).
+- **SGLang needs `--context-length`:** Default context length for Llama 4 Scout is huge; causes OOM on KV cache allocation. Must limit to 4096.
+- **SGLang needs `libnuma1` and `ninja`:** Not in default RunPod image, install with apt/pip before launching.
+- **Subprocess PIPE deadlock:** Don't use `stdout=PIPE` for engine subprocesses — SGLang logs fill the buffer and block. Use `DEVNULL`.
+- **SGLang uses `fp8_e4m3` not `fp8`:** The `--kv-cache-dtype` flag differs from vLLM.
 
 ---
 
-## Latest commit: 7cebaa9
+## All tasks complete
