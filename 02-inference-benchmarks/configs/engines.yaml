@@ -1,5 +1,5 @@
 model:
-  name: nvidia/Llama-4-Scout-17B-16E-Instruct-FP8
+  name: RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic
   type: moe
   active_params: 17B
   total_params: 109B
@@ -20,7 +20,7 @@ engines:
     port: 8020
     extra_args:
       - "--model-path"
-      - "nvidia/Llama-4-Scout-17B-16E-Instruct-FP8"
+      - "RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic"
       - "--port"
       - "8020"
       - "--kv-cache-dtype"
