@@ -1,8 +1,12 @@
 """vLLM benchmark runner."""
 
+import os
+import shutil
 import subprocess
 
 from .base import BenchmarkRunner
+
+VLLM_VENV_BIN = "/workspace/venvs/vllm/bin/vllm"
 
 
 class VllmRunner(BenchmarkRunner):
@@ -12,8 +16,9 @@ class VllmRunner(BenchmarkRunner):
         super().__init__("vllm", port)
 
     async def start_server(self, model: str, extra_args: list[str] | None = None) -> None:
+        vllm_bin = VLLM_VENV_BIN if os.path.exists(VLLM_VENV_BIN) else shutil.which("vllm") or "vllm"
         cmd = [
-            "vllm", "serve", model,
+            vllm_bin, "serve", model,
             "--port", str(self.port),
             *(extra_args or []),
         ]
