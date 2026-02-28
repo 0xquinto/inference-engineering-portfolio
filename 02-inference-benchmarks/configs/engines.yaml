@@ -1,8 +1,9 @@
 model:
-  name: meta-llama/Llama-4-Scout-17B-16E-Instruct
+  name: nvidia/Llama-4-Scout-Instruct-FP8
   type: moe
   active_params: 17B
   total_params: 109B
+  precision: fp8
 
 engines:
   vllm:
@@ -10,24 +11,20 @@ engines:
     extra_args:
       - "--max-model-len"
       - "4096"
-      - "--dtype"
-      - "auto"
-      - "--quantization"
-      - "bitsandbytes"
-      - "--load-format"
-      - "bitsandbytes"
+      - "--kv-cache-dtype"
+      - "fp8"
+      - "--max-num-batched-tokens"
+      - "8192"
 
   sglang:
     port: 8020
     extra_args:
       - "--model-path"
-      - "meta-llama/Llama-4-Scout-17B-16E-Instruct"
+      - "nvidia/Llama-4-Scout-Instruct-FP8"
       - "--port"
       - "8020"
-      - "--dtype"
-      - "auto"
-      - "--quantization"
-      - "bitsandbytes"
+      - "--kv-cache-dtype"
+      - "fp8"
 
   tensorrt_llm:
     port: 8030
@@ -42,5 +39,5 @@ benchmark:
   temperature: 0.0
 
 hardware:
-  gpu: "NVIDIA H100 80GB HBM3"
+  gpu: "NVIDIA H200 141GB HBM3e"
   provider: "RunPod"
