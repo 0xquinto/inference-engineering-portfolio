@@ -1,42 +1,34 @@
 # Inference Engineering Portfolio
 
-Three projects demonstrating inference optimization skills — from smart serving to deep GPU optimization.
+Three projects demonstrating core inference optimization skills — from model compression to runtime optimization.
 
 ## Projects
 
-| # | Project | What it proves | Stack |
-|---|---------|---------------|-------|
-| 01 | [Agentic Inference Gateway](./01-agentic-gateway/) | Smart multi-model routing for agent workloads | vLLM, FastAPI, SGLang |
-| 02 | [Inference Stack Benchmarks](./02-inference-benchmarks/) | Rigorous evaluation of serving frameworks | vLLM, SGLang, TGI |
-| 03 | [Speculative Decoding & MoE](./03-speculative-decoding/) | Frontier optimization techniques | vLLM, DeepSpeed |
+| # | Project | What it proves | Key technique |
+|---|---------|---------------|---------------|
+| 01 | [Quantization Pipeline](./01-quantization/) | Compress models and measure quality-speed-memory tradeoffs | GPTQ, AWQ, FP8 quantization |
+| 02 | [Inference Stack Benchmarks](./02-inference-benchmarks/) | Rigorous evaluation of serving frameworks on production hardware | vLLM vs SGLang on H200 |
+| 03 | [Prefix Caching](./03-prefix-caching/) | KV cache optimization for real inference workloads | Prefix caching, cache-aware routing |
 
-## Start Here
-
-**Order matters.** Each project builds on skills from the previous one.
+## Skill Progression
 
 ```
-Project 01 (week 1-2)  →  Project 02 (week 3)  →  Project 03 (week 4-5)
-application layer         systems evaluation       deep optimization
+Project 01 (model optimization)  →  Project 02 (engine evaluation)  →  Project 03 (runtime optimization)
+compress the model                  choose the engine                   optimize the serving
 ```
 
-## GPU Access (cheapest options)
+## GPU Access
 
 | Provider | GPU | Cost | Good for |
 |----------|-----|------|----------|
-| RunPod | A10G (24GB) | ~$0.40/hr | Projects 01, 02 (8B models) |
-| RunPod | A100 (80GB) | ~$1.50/hr | Project 03, 70B quantized |
-| Lambda Cloud | A10G | ~$0.50/hr | Same as above |
-| Google Cloud | A100 | Free $300 credits | Best starting point |
+| RunPod | A40 (48GB) | ~$0.75/hr | Projects 01, 03 |
+| RunPod | H200 (141GB) | ~$3.59/hr | Project 02 (MoE models) |
 
 ## Prerequisites
 
 ```bash
-# Python 3.10+
-python --version
-
-# CUDA toolkit (on your GPU instance)
-nvidia-smi
-
-# Core dependencies (install on GPU instance)
-pip install vllm fastapi uvicorn httpx pandas matplotlib
+python --version  # 3.10+
+nvidia-smi        # CUDA toolkit on GPU instance
 ```
+
+Each project has its own `requirements.txt` and `scripts/setup_gpu.sh` for GPU setup. All tests run locally without a GPU.
