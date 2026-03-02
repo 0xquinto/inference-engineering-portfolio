@@ -14,11 +14,6 @@ formats:
     bits: 4
     group_size: 128
     calibration_samples: 128
-  awq_int4:
-    description: "AWQ INT4 activation-aware weight quantization"
-    tool: autoawq
-    bits: 4
-    group_size: 128
   fp8:
     description: "FP8 E4M3 weights + KV cache"
     tool: llm_compressor

@@ -37,7 +37,6 @@ class QuantizationRunner:
 
         dispatch = {
             "auto_gptq": self._run_gptq,
-            "autoawq": self._run_awq,
             "llm_compressor": self._run_fp8,
         }
 
@@ -53,6 +52,7 @@ class QuantizationRunner:
     def _run_gptq(self, fmt: QuantFormat) -> QuantizeResult:
         from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
         from transformers import AutoTokenizer
+        from datasets import load_dataset
 
         output_path = self._output_path(fmt)
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
@@ -65,8 +65,18 @@ class QuantizationRunner:
             self.model_name, quant_config
         )
 
+        n_samples = fmt.calibration_samples or 128
+        dataset = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
+        examples = []
+        for text in dataset["text"]:
+            if len(text.strip()) > 100:
+                tokens = tokenizer(text, return_tensors="pt", truncation=True, max_length=2048)
+                examples.append({"input_ids": tokens.input_ids[0], "attention_mask": tokens.attention_mask[0]})
+            if len(examples) >= n_samples:
+                break
+
         start = time.time()
-        model.quantize(tokenizer, calibration_samples=fmt.calibration_samples or 128)
+        model.quantize(examples)
         elapsed = time.time() - start
 
         model.save_quantized(str(output_path))
@@ -81,35 +91,6 @@ class QuantizationRunner:
             time_seconds=elapsed,
             original_size_mb=orig_size,
             quantized_size_mb=quant_size,
-        )
-
-    def _run_awq(self, fmt: QuantFormat) -> QuantizeResult:
-        from awq import AutoAWQForCausalLM
-        from transformers import AutoTokenizer
-
-        output_path = self._output_path(fmt)
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        model = AutoAWQForCausalLM.from_pretrained(self.model_name)
-
-        quant_config = {
-            "w_bit": fmt.bits or 4,
-            "q_group_size": fmt.group_size or 128,
-            "zero_point": True,
-        }
-
-        start = time.time()
-        model.quantize(tokenizer, quant_config=quant_config)
-        elapsed = time.time() - start
-
-        model.save_quantized(str(output_path))
-        tokenizer.save_pretrained(str(output_path))
-
-        return QuantizeResult(
-            format_name=fmt.name,
-            output_path=str(output_path),
-            time_seconds=elapsed,
-            original_size_mb=0,
-            quantized_size_mb=_dir_size_mb(output_path),
         )
 
     def _run_fp8(self, fmt: QuantFormat) -> QuantizeResult:

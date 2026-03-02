@@ -52,22 +52,6 @@ class TestQuantizationRunner:
         mock_gptq.assert_called_once_with(fmt)
         assert result.format_name == "gptq_int4"
 
-    @patch("src.quantize.QuantizationRunner._run_awq")
-    def test_dispatches_awq(self, mock_awq):
-        mock_awq.return_value = QuantizeResult(
-            format_name="awq_int4",
-            output_path="quantized_models/test-awq_int4",
-            time_seconds=45.0,
-            original_size_mb=14000,
-            quantized_size_mb=4100,
-        )
-        fmt = QuantFormat.from_dict("awq_int4", {
-            "description": "AWQ", "tool": "autoawq", "bits": 4, "group_size": 128,
-        })
-        runner = QuantizationRunner(model_name="test/model")
-        result = runner.quantize(fmt)
-        mock_awq.assert_called_once_with(fmt)
-
     def test_unknown_tool_raises(self):
         fmt = QuantFormat.from_dict("unknown", {
             "description": "Unknown", "tool": "nonexistent_tool",

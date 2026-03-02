@@ -37,7 +37,7 @@ class TestLoadConfig:
         cfg = load_config(Path(__file__).parent.parent / "configs" / "quantization.yaml")
         assert isinstance(cfg, QuantConfig)
         assert cfg.model_name == "Qwen/Qwen2.5-7B-Instruct"
-        assert len(cfg.formats) == 4
+        assert len(cfg.formats) == 3
         assert "bf16" in [f.name for f in cfg.formats]
 
     def test_benchmark_prompts(self):
