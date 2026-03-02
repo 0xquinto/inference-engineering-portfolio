@@ -6,7 +6,7 @@ Three projects demonstrating core inference optimization skills — from model c
 
 | # | Project | What it proves | Key technique |
 |---|---------|---------------|---------------|
-| 01 | [Quantization Pipeline](./01-quantization/) | Compress models and measure quality-speed-memory tradeoffs | GPTQ, AWQ, FP8 quantization |
+| 01 | [Quantization Pipeline](./01-quantization/) | Compress models and measure quality-speed-memory tradeoffs | W4A16 INT4, FP8 via llmcompressor |
 | 02 | [Inference Stack Benchmarks](./02-inference-benchmarks/) | Rigorous evaluation of serving frameworks on production hardware | vLLM vs SGLang on H200 |
 | 03 | [Prefix Caching](./03-prefix-caching/) | KV cache optimization for real inference workloads | Prefix caching, cache-aware routing |
 

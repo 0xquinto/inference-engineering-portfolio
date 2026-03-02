@@ -18,4 +18,4 @@ class TestCLI:
         )
         assert result.returncode == 0
         assert "bf16" in result.stdout
-        assert "gptq_int4" in result.stdout
+        assert "w4a16" in result.stdout

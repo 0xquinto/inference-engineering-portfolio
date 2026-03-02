@@ -7,7 +7,7 @@ from src.benchmark import BenchmarkResult, PerfBenchmarker
 class TestBenchmarkResult:
     def test_tokens_per_sec(self):
         r = BenchmarkResult(
-            format_name="gptq_int4",
+            format_name="w4a16",
             concurrency=10,
             ttft_ms=32.1,
             total_time_ms=500.0,
@@ -18,7 +18,7 @@ class TestBenchmarkResult:
 
     def test_tokens_per_sec_zero_time(self):
         r = BenchmarkResult(
-            format_name="gptq_int4",
+            format_name="w4a16",
             concurrency=1,
             ttft_ms=0.0,
             total_time_ms=0.0,

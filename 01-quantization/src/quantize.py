@@ -36,8 +36,7 @@ class QuantizationRunner:
             )
 
         dispatch = {
-            "auto_gptq": self._run_gptq,
-            "llm_compressor": self._run_fp8,
+            "llm_compressor": self._run_llmcompressor,
         }
 
         if fmt.tool not in dispatch:
@@ -49,71 +48,27 @@ class QuantizationRunner:
         short_name = self.model_name.split("/")[-1]
         return self.output_dir / f"{short_name}-{fmt.name}"
 
-    def _run_gptq(self, fmt: QuantFormat) -> QuantizeResult:
-        from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
-        from transformers import AutoTokenizer
-        from datasets import load_dataset
-
-        output_path = self._output_path(fmt)
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        quant_config = BaseQuantizeConfig(
-            bits=fmt.bits or 4,
-            group_size=fmt.group_size or 128,
-        )
-
-        model = AutoGPTQForCausalLM.from_pretrained(
-            self.model_name, quant_config
-        )
-
-        n_samples = fmt.calibration_samples or 128
-        dataset = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
-        examples = []
-        for text in dataset["text"]:
-            if len(text.strip()) > 100:
-                tokens = tokenizer(text, return_tensors="pt", truncation=True, max_length=2048)
-                examples.append({"input_ids": tokens.input_ids[0], "attention_mask": tokens.attention_mask[0]})
-            if len(examples) >= n_samples:
-                break
-
-        start = time.time()
-        model.quantize(examples)
-        elapsed = time.time() - start
-
-        model.save_quantized(str(output_path))
-        tokenizer.save_pretrained(str(output_path))
-
-        orig_size = _dir_size_mb(Path(model.config._name_or_path))
-        quant_size = _dir_size_mb(output_path)
-
-        return QuantizeResult(
-            format_name=fmt.name,
-            output_path=str(output_path),
-            time_seconds=elapsed,
-            original_size_mb=orig_size,
-            quantized_size_mb=quant_size,
-        )
-
-    def _run_fp8(self, fmt: QuantFormat) -> QuantizeResult:
-        from llmcompressor.modifiers.quantization import QuantizationModifier
+    def _run_llmcompressor(self, fmt: QuantFormat) -> QuantizeResult:
         from llmcompressor import oneshot
-        from transformers import AutoModelForCausalLM, AutoTokenizer
 
         output_path = self._output_path(fmt)
+        dtype = fmt.target_dtype or "fp8"
 
-        model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, torch_dtype="auto", device_map="auto"
-        )
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-
-        recipe = QuantizationModifier(
-            targets="Linear", scheme="FP8", ignore=["lm_head"]
-        )
+        if dtype == "w4a16":
+            recipe, dataset, n_samples = self._w4a16_recipe(fmt)
+        else:
+            recipe, dataset, n_samples = self._fp8_recipe()
 
         start = time.time()
-        oneshot(model=model, recipe=recipe, output_dir=str(output_path))
+        oneshot(
+            model=self.model_name,
+            recipe=recipe,
+            output_dir=str(output_path),
+            dataset=dataset,
+            num_calibration_samples=n_samples,
+            max_seq_length=2048,
+        )
         elapsed = time.time() - start
-
-        tokenizer.save_pretrained(str(output_path))
 
         return QuantizeResult(
             format_name=fmt.name,
@@ -122,6 +77,25 @@ class QuantizationRunner:
             original_size_mb=0,
             quantized_size_mb=_dir_size_mb(output_path),
         )
+
+    def _w4a16_recipe(self, fmt: QuantFormat):
+        from llmcompressor.modifiers.quantization import GPTQModifier
+
+        recipe = GPTQModifier(
+            targets="Linear",
+            scheme="W4A16",
+            ignore=["lm_head"],
+        )
+        n_samples = fmt.calibration_samples or 128
+        return recipe, "HuggingFaceH4/ultrachat_200k", n_samples
+
+    def _fp8_recipe(self):
+        from llmcompressor.modifiers.quantization import QuantizationModifier
+
+        recipe = QuantizationModifier(
+            targets="Linear", scheme="FP8", ignore=["lm_head"]
+        )
+        return recipe, None, None
 
 
 def _dir_size_mb(path: Path) -> int:

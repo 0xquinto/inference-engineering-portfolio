@@ -21,7 +21,7 @@ def sample_results():
             "vram_mb": 14200,
             "load_time_s": 12.3,
         },
-        "gptq_int4": {
+        "w4a16": {
             "perplexity": 7.01,
             "mmlu_accuracy": 0.698,
             "ttft_ms": {"1": 32.1, "10": 38.5, "50": 62.7},

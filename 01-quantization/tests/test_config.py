@@ -4,18 +4,20 @@ from src.config import QuantFormat, QuantConfig, load_config
 
 
 class TestQuantFormat:
-    def test_from_dict_gptq(self):
+    def test_from_dict_w4a16(self):
         data = {
-            "description": "GPTQ INT4",
-            "tool": "auto_gptq",
+            "description": "INT4 W4A16",
+            "tool": "llm_compressor",
             "bits": 4,
             "group_size": 128,
             "calibration_samples": 128,
+            "target_dtype": "w4a16",
         }
-        fmt = QuantFormat.from_dict("gptq_int4", data)
-        assert fmt.name == "gptq_int4"
-        assert fmt.tool == "auto_gptq"
+        fmt = QuantFormat.from_dict("w4a16", data)
+        assert fmt.name == "w4a16"
+        assert fmt.tool == "llm_compressor"
         assert fmt.bits == 4
+        assert fmt.target_dtype == "w4a16"
 
     def test_from_dict_baseline(self):
         data = {"description": "BF16 baseline", "tool": None}
@@ -27,9 +29,9 @@ class TestQuantFormat:
         assert fmt.vllm_model_path("Qwen/Qwen2.5-7B-Instruct") == "Qwen/Qwen2.5-7B-Instruct"
 
     def test_vllm_model_id_quantized(self):
-        fmt = QuantFormat.from_dict("gptq_int4", {"description": "GPTQ", "tool": "auto_gptq", "bits": 4})
+        fmt = QuantFormat.from_dict("w4a16", {"description": "W4A16", "tool": "llm_compressor", "bits": 4})
         path = fmt.vllm_model_path("Qwen/Qwen2.5-7B-Instruct")
-        assert path == "quantized_models/Qwen2.5-7B-Instruct-gptq_int4"
+        assert path == "quantized_models/Qwen2.5-7B-Instruct-w4a16"
 
 
 class TestLoadConfig:

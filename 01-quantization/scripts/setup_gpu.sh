@@ -12,7 +12,7 @@ fi
 
 # Install Python dependencies
 pip install --upgrade pip
-pip install auto-gptq autoawq llmcompressor
+pip install llmcompressor>=0.9.0
 pip install vllm>=0.16.0
 pip install httpx pandas matplotlib pyyaml tqdm
 pip install transformers datasets torch
