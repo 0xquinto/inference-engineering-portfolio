@@ -1,0 +1,14 @@
+engines:
+  vllm:
+    port: 8010
+    prefix_caching_flag: "--enable-prefix-caching"
+    extra_args:
+      - "--max-model-len"
+      - "8192"
+
+  sglang:
+    port: 8020
+    prefix_caching_flag: null  # RadixAttention is always on; disable with --disable-radix-cache
+    extra_args:
+      - "--context-length"
+      - "8192"
