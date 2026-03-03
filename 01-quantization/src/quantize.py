@@ -55,18 +55,22 @@ class QuantizationRunner:
         dtype = fmt.target_dtype or "fp8"
 
         if dtype == "w4a16":
-            recipe, dataset, n_samples = self._w4a16_recipe(fmt)
+            recipe = self._w4a16_recipe(fmt)
+            oneshot_kwargs = dict(
+                dataset="HuggingFaceH4/ultrachat_200k",
+                num_calibration_samples=fmt.calibration_samples or 128,
+                max_seq_length=2048,
+            )
         else:
-            recipe, dataset, n_samples = self._fp8_recipe()
+            recipe = self._fp8_recipe()
+            oneshot_kwargs = dict(pipeline="datafree")
 
         start = time.time()
         oneshot(
             model=self.model_name,
             recipe=recipe,
             output_dir=str(output_path),
-            dataset=dataset,
-            num_calibration_samples=n_samples,
-            max_seq_length=2048,
+            **oneshot_kwargs,
         )
         elapsed = time.time() - start
 
@@ -81,21 +85,18 @@ class QuantizationRunner:
     def _w4a16_recipe(self, fmt: QuantFormat):
         from llmcompressor.modifiers.quantization import GPTQModifier
 
-        recipe = GPTQModifier(
+        return GPTQModifier(
             targets="Linear",
             scheme="W4A16",
             ignore=["lm_head"],
         )
-        n_samples = fmt.calibration_samples or 128
-        return recipe, "HuggingFaceH4/ultrachat_200k", n_samples
 
     def _fp8_recipe(self):
         from llmcompressor.modifiers.quantization import QuantizationModifier
 
-        recipe = QuantizationModifier(
+        return QuantizationModifier(
             targets="Linear", scheme="FP8", ignore=["lm_head"]
         )
-        return recipe, None, None
 
 
 def _dir_size_mb(path: Path) -> int:
