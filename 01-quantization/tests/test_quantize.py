@@ -19,7 +19,7 @@ class TestQuantizeResult:
     def test_compression_ratio_baseline(self):
         r = QuantizeResult(
             format_name="bf16",
-            output_path="Qwen/Qwen2.5-7B-Instruct",
+            output_path="Qwen/Qwen3.5-9B",
             time_seconds=0.0,
             original_size_mb=14000,
             quantized_size_mb=14000,
@@ -30,7 +30,7 @@ class TestQuantizeResult:
 class TestQuantizationRunner:
     def test_skip_baseline(self):
         fmt = QuantFormat.from_dict("bf16", {"description": "baseline", "tool": None})
-        runner = QuantizationRunner(model_name="Qwen/Qwen2.5-7B-Instruct")
+        runner = QuantizationRunner(model_name="Qwen/Qwen3.5-9B")
         result = runner.quantize(fmt)
         assert result.format_name == "bf16"
         assert result.time_seconds == 0.0

@@ -19,10 +19,10 @@ pip install pytest pytest-asyncio
 # Download model tokenizers
 python -c "
 from transformers import AutoTokenizer
-print('Downloading Qwen2.5-7B-Instruct tokenizer...')
-AutoTokenizer.from_pretrained('Qwen/Qwen2.5-7B-Instruct')
-print('Downloading Qwen2.5-0.5B-Instruct (draft model)...')
-AutoTokenizer.from_pretrained('Qwen/Qwen2.5-0.5B-Instruct')
+print('Downloading Qwen3.5-9B tokenizer...')
+AutoTokenizer.from_pretrained('Qwen/Qwen3.5-9B')
+print('Downloading Qwen3.5-0.8B (draft model)...')
+AutoTokenizer.from_pretrained('Qwen/Qwen3.5-0.8B')
 print('Done.')
 "
 

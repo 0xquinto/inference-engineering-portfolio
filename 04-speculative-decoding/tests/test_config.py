@@ -41,12 +41,12 @@ class TestSpecMethod:
         data = {
             "description": "Small draft model verification",
             "spec_type": "draft_model",
-            "draft_model": "Qwen/Qwen2.5-0.5B-Instruct",
+            "draft_model": "Qwen/Qwen3.5-0.8B",
             "num_speculative_tokens": 5,
         }
         method = SpecMethod.from_dict("draft_model", data)
         assert method.spec_type == "draft_model"
-        assert method.draft_model == "Qwen/Qwen2.5-0.5B-Instruct"
+        assert method.draft_model == "Qwen/Qwen3.5-0.8B"
 
     def test_is_baseline_true(self):
         method = SpecMethod.from_dict("baseline", {"description": "baseline", "spec_type": None})
@@ -98,16 +98,28 @@ class TestSpecMethod:
         assert "--ngram-prompt-lookup-min" in args
         assert "2" in args
 
+    def test_vllm_args_mtp(self):
+        method = SpecMethod.from_dict("mtp", {
+            "description": "Multi-Token Prediction",
+            "spec_type": "mtp",
+            "num_speculative_tokens": 1,
+        })
+        args = method.vllm_args()
+        assert "--speculative-model" in args
+        assert "[mtp]" in args
+        assert "--num-speculative-tokens" in args
+        assert "1" in args
+
     def test_vllm_args_draft_model(self):
         method = SpecMethod.from_dict("draft_model", {
             "description": "draft",
             "spec_type": "draft_model",
-            "draft_model": "Qwen/Qwen2.5-0.5B-Instruct",
+            "draft_model": "Qwen/Qwen3.5-0.8B",
             "num_speculative_tokens": 5,
         })
         args = method.vllm_args()
         assert "--speculative-model" in args
-        assert "Qwen/Qwen2.5-0.5B-Instruct" in args
+        assert "Qwen/Qwen3.5-0.8B" in args
         assert "--num-speculative-tokens" in args
         assert "5" in args
 
@@ -116,8 +128,8 @@ class TestLoadConfig:
     def test_loads_yaml(self):
         cfg = load_config(Path(__file__).parent.parent / "configs" / "speculative.yaml")
         assert isinstance(cfg, SpecConfig)
-        assert cfg.model_name == "Qwen/Qwen2.5-7B-Instruct"
-        assert len(cfg.methods) == 5
+        assert cfg.model_name == "Qwen/Qwen3.5-9B"
+        assert len(cfg.methods) == 6
         assert "baseline" in [m.name for m in cfg.methods]
 
     def test_benchmark_prompts(self):

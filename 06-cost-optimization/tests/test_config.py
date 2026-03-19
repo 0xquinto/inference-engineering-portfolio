@@ -6,8 +6,8 @@ from src.config import ModelTier, CostConfig, load_config
 class TestModelTier:
     def test_from_dict_small(self):
         data = {
-            "name": "Qwen/Qwen2.5-0.5B-Instruct",
-            "params": "0.5B",
+            "name": "Qwen/Qwen3.5-0.8B",
+            "params": "0.8B",
             "description": "Fast, cheap, handles simple queries",
             "port": 8010,
             "gpu_cost_per_hour": 0.75,
@@ -15,19 +15,19 @@ class TestModelTier:
         }
         tier = ModelTier.from_dict("small", data)
         assert tier.name == "small"
-        assert tier.model_name == "Qwen/Qwen2.5-0.5B-Instruct"
+        assert tier.model_name == "Qwen/Qwen3.5-0.8B"
         assert tier.port == 8010
         assert tier.gpu_cost_per_hour == 0.75
         assert tier.vram_mb == 1200
 
     def test_from_dict_large(self):
         data = {
-            "name": "Qwen/Qwen2.5-72B-Instruct",
-            "params": "72B",
+            "name": "Qwen/Qwen3.5-27B",
+            "params": "27B",
             "description": "Highest quality",
             "port": 8012,
             "gpu_cost_per_hour": 3.59,
-            "vram_mb": 45000,
+            "vram_mb": 28000,
         }
         tier = ModelTier.from_dict("large", data)
         assert tier.name == "large"

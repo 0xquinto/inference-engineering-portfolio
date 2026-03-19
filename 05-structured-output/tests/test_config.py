@@ -54,7 +54,7 @@ class TestLoadConfig:
     def test_loads_yaml(self):
         cfg = load_config(Path(__file__).parent.parent / "configs" / "structured.yaml")
         assert isinstance(cfg, StructuredConfig)
-        assert cfg.model_name == "Qwen/Qwen2.5-7B-Instruct"
+        assert cfg.model_name == "Qwen/Qwen3.5-9B"
         assert len(cfg.backends) == 3
         assert "xgrammar" in [b.name for b in cfg.backends]
 

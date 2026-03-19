@@ -26,19 +26,19 @@ class TestQuantFormat:
 
     def test_vllm_model_id_baseline(self):
         fmt = QuantFormat.from_dict("bf16", {"description": "baseline", "tool": None})
-        assert fmt.vllm_model_path("Qwen/Qwen2.5-7B-Instruct") == "Qwen/Qwen2.5-7B-Instruct"
+        assert fmt.vllm_model_path("Qwen/Qwen3.5-9B") == "Qwen/Qwen3.5-9B"
 
     def test_vllm_model_id_quantized(self):
         fmt = QuantFormat.from_dict("w4a16", {"description": "W4A16", "tool": "llm_compressor", "bits": 4})
-        path = fmt.vllm_model_path("Qwen/Qwen2.5-7B-Instruct")
-        assert path == "quantized_models/Qwen2.5-7B-Instruct-w4a16"
+        path = fmt.vllm_model_path("Qwen/Qwen3.5-9B")
+        assert path == "quantized_models/Qwen3.5-9B-w4a16"
 
 
 class TestLoadConfig:
     def test_loads_yaml(self):
         cfg = load_config(Path(__file__).parent.parent / "configs" / "quantization.yaml")
         assert isinstance(cfg, QuantConfig)
-        assert cfg.model_name == "Qwen/Qwen2.5-7B-Instruct"
+        assert cfg.model_name == "Qwen/Qwen3.5-9B"
         assert len(cfg.formats) == 3
         assert "bf16" in [f.name for f in cfg.formats]
 

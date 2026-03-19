@@ -1,25 +1,25 @@
 models:
   small:
-    name: Qwen/Qwen2.5-0.5B-Instruct
-    params: 0.5B
+    name: Qwen/Qwen3.5-0.8B
+    params: 0.8B
     description: "Fast, cheap, handles simple queries"
     port: 8010
     gpu_cost_per_hour: 0.75  # A40 price
     vram_mb: 1200
   medium:
-    name: Qwen/Qwen2.5-7B-Instruct
-    params: 7B
+    name: Qwen/Qwen3.5-9B
+    params: 9B
     description: "Balanced quality/cost for moderate tasks"
     port: 8011
     gpu_cost_per_hour: 0.75
     vram_mb: 14200
   large:
-    name: Qwen/Qwen2.5-72B-Instruct
-    params: 72B
+    name: Qwen/Qwen3.5-27B
+    params: 27B
     description: "Highest quality for complex tasks"
     port: 8012
     gpu_cost_per_hour: 3.59  # H200 price
-    vram_mb: 45000
+    vram_mb: 28000
 
 cascade:
   complexity_keywords:

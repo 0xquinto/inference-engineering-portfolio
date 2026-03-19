@@ -16,7 +16,7 @@ pip install pytest pytest-asyncio
 echo "Downloading model..."
 python -c "
 from transformers import AutoTokenizer
-AutoTokenizer.from_pretrained('Qwen/Qwen2.5-7B-Instruct')
+AutoTokenizer.from_pretrained('Qwen/Qwen3.5-9B')
 "
 
 echo "=== Setup complete ==="

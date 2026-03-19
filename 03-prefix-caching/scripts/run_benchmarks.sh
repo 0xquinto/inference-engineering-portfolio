@@ -4,7 +4,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 ENGINE="${1:-vllm}"
-MODEL="Qwen/Qwen2.5-7B-Instruct"
+MODEL="Qwen/Qwen3.5-9B"
 PORT=8010
 
 echo "=== Running prefix caching benchmarks with $ENGINE ==="

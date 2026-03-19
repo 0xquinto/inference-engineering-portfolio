@@ -25,9 +25,9 @@ def cascade_config(keywords):
 @pytest.fixture
 def model_tiers():
     return [
-        ModelTier("small", "Qwen/Qwen2.5-0.5B-Instruct", "0.5B", "Small", 8010, 0.75, 1200),
-        ModelTier("medium", "Qwen/Qwen2.5-7B-Instruct", "7B", "Medium", 8011, 0.75, 14200),
-        ModelTier("large", "Qwen/Qwen2.5-72B-Instruct", "72B", "Large", 8012, 3.59, 45000),
+        ModelTier("small", "Qwen/Qwen3.5-0.8B", "0.8B", "Small", 8010, 0.75, 1200),
+        ModelTier("medium", "Qwen/Qwen3.5-9B", "9B", "Medium", 8011, 0.75, 14200),
+        ModelTier("large", "Qwen/Qwen3.5-27B", "27B", "Large", 8012, 3.59, 28000),
     ]
 
 

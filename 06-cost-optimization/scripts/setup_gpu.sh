@@ -17,9 +17,9 @@ pip install pytest pytest-asyncio
 python -c "
 from transformers import AutoTokenizer
 print('Downloading model tokenizers...')
-AutoTokenizer.from_pretrained('Qwen/Qwen2.5-0.5B-Instruct')
-AutoTokenizer.from_pretrained('Qwen/Qwen2.5-7B-Instruct')
-print('Done. (72B model downloaded on-demand during benchmark)')
+AutoTokenizer.from_pretrained('Qwen/Qwen3.5-0.8B')
+AutoTokenizer.from_pretrained('Qwen/Qwen3.5-9B')
+print('Done. (27B model downloaded on-demand during benchmark)')
 "
 
 echo "=== Setup complete ==="

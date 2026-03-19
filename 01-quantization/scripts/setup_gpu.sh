@@ -21,9 +21,9 @@ pip install pytest pytest-asyncio
 # Download model
 python -c "
 from transformers import AutoTokenizer, AutoModelForCausalLM
-print('Downloading Qwen2.5-7B-Instruct...')
-AutoTokenizer.from_pretrained('Qwen/Qwen2.5-7B-Instruct')
-AutoModelForCausalLM.from_pretrained('Qwen/Qwen2.5-7B-Instruct', torch_dtype='auto')
+print('Downloading Qwen3.5-9B...')
+AutoTokenizer.from_pretrained('Qwen/Qwen3.5-9B')
+AutoModelForCausalLM.from_pretrained('Qwen/Qwen3.5-9B', torch_dtype='auto')
 print('Done.')
 "
 

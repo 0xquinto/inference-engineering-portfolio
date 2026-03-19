@@ -65,6 +65,11 @@ class SpecMethod:
             if self.num_speculative_tokens is not None:
                 args.extend(["--num-speculative-tokens", str(self.num_speculative_tokens)])
 
+        elif self.spec_type == "mtp":
+            args.extend(["--speculative-model", "[mtp]"])
+            if self.num_speculative_tokens is not None:
+                args.extend(["--num-speculative-tokens", str(self.num_speculative_tokens)])
+
         return args
 
 

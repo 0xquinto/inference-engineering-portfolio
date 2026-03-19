@@ -1,8 +1,8 @@
 model:
-  name: RedHatAI/Llama-4-Scout-17B-16E-Instruct-FP8-dynamic
-  type: moe
-  active_params: 17B
-  total_params: 109B
+  name: Qwen/Qwen3.5-9B-FP8
+  type: dense
+  active_params: 9B
+  total_params: 9B
   precision: fp8
 
 engines:

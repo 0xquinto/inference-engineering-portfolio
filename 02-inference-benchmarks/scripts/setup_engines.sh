@@ -19,8 +19,8 @@ python -c "from huggingface_hub import whoami; print('Logged in as:', whoami()['
 }
 
 # Download model
-echo "=== Downloading Llama 4 Scout ==="
-python -c "from huggingface_hub import snapshot_download; snapshot_download('meta-llama/Llama-4-Scout-17B-16E-Instruct')"
+echo "=== Downloading Qwen3.5-9B ==="
+python -c "from huggingface_hub import snapshot_download; snapshot_download('Qwen/Qwen3.5-9B-FP8')"
 echo "Model downloaded."
 
 # Create vLLM venv

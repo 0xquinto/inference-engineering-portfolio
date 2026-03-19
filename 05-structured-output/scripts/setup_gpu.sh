@@ -16,8 +16,8 @@ pip install pytest pytest-asyncio
 
 python -c "
 from transformers import AutoTokenizer
-print('Downloading Qwen2.5-7B-Instruct...')
-AutoTokenizer.from_pretrained('Qwen/Qwen2.5-7B-Instruct')
+print('Downloading Qwen3.5-9B...')
+AutoTokenizer.from_pretrained('Qwen/Qwen3.5-9B')
 print('Done.')
 "
 

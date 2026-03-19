@@ -1,7 +1,7 @@
 model:
-  name: Qwen/Qwen2.5-7B-Instruct
+  name: Qwen/Qwen3.5-9B
   type: dense
-  params: 7B
+  params: 9B
 
 methods:
   baseline:
@@ -27,8 +27,12 @@ methods:
   draft_model:
     description: "Small draft model verification"
     spec_type: draft_model
-    draft_model: Qwen/Qwen2.5-0.5B-Instruct
+    draft_model: Qwen/Qwen3.5-0.8B
     num_speculative_tokens: 5
+  mtp:
+    description: "Multi-Token Prediction using model's native MTP heads"
+    spec_type: mtp
+    num_speculative_tokens: 1
 
 benchmark:
   port: 8010
