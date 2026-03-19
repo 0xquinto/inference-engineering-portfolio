@@ -12,13 +12,14 @@ class TestCLI:
             capture_output=True, text=True, cwd=PROJECT_ROOT,
         )
         assert result.returncode == 0
-        assert "Prefix Caching" in result.stdout
+        assert "Speculative Decoding" in result.stdout
 
-    def test_list_scenarios(self):
+    def test_list_methods(self):
         result = subprocess.run(
-            [sys.executable, "-m", "src.main", "--list-scenarios"],
+            [sys.executable, "-m", "src.main", "--list-methods"],
             capture_output=True, text=True, cwd=PROJECT_ROOT,
         )
         assert result.returncode == 0
-        assert "shared_system_prompt" in result.stdout
-        assert "cache_pressure" in result.stdout
+        assert "baseline" in result.stdout
+        assert "eagle3" in result.stdout
+        assert "ngram" in result.stdout

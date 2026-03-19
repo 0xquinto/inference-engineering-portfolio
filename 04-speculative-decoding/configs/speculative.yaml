@@ -1,0 +1,45 @@
+model:
+  name: Qwen/Qwen2.5-7B-Instruct
+  type: dense
+  params: 7B
+
+methods:
+  baseline:
+    description: "Autoregressive decoding (no speculation)"
+    spec_type: null
+  eagle3:
+    description: "EAGLE-3 hidden-state speculation"
+    spec_type: eagle
+    draft_model: null  # uses model's own EAGLE head
+    num_speculative_tokens: 5
+  p_eagle:
+    description: "Parallel EAGLE — all draft tokens in one forward pass"
+    spec_type: eagle
+    draft_model: null
+    num_speculative_tokens: 5
+    parallel_drafting: true
+  ngram:
+    description: "N-gram suffix matching (no extra model)"
+    spec_type: ngram
+    ngram_prompt_lookup_max: 5
+    ngram_prompt_lookup_min: 2
+    num_speculative_tokens: 5
+  draft_model:
+    description: "Small draft model verification"
+    spec_type: draft_model
+    draft_model: Qwen/Qwen2.5-0.5B-Instruct
+    num_speculative_tokens: 5
+
+benchmark:
+  port: 8010
+  qps_levels: [1, 5, 10, 25, 50]
+  warmup_requests: 5
+  requests_per_prompt: 10
+  max_tokens: 256
+  temperature: 0.0
+  prompts:
+    - "What is the capital of France?"
+    - "Explain quantum computing in simple terms."
+    - "Write a Python function to check if a number is prime."
+    - "Summarize the key differences between TCP and UDP."
+    - "Write a detailed analysis of the advantages and disadvantages of microservices architecture."

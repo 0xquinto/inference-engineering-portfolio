@@ -1,0 +1,84 @@
+models:
+  small:
+    name: Qwen/Qwen2.5-0.5B-Instruct
+    params: 0.5B
+    description: "Fast, cheap, handles simple queries"
+    port: 8010
+    gpu_cost_per_hour: 0.75  # A40 price
+    vram_mb: 1200
+  medium:
+    name: Qwen/Qwen2.5-7B-Instruct
+    params: 7B
+    description: "Balanced quality/cost for moderate tasks"
+    port: 8011
+    gpu_cost_per_hour: 0.75
+    vram_mb: 14200
+  large:
+    name: Qwen/Qwen2.5-72B-Instruct
+    params: 72B
+    description: "Highest quality for complex tasks"
+    port: 8012
+    gpu_cost_per_hour: 3.59  # H200 price
+    vram_mb: 45000
+
+cascade:
+  complexity_keywords:
+    simple:
+      - "what is"
+      - "who is"
+      - "define"
+      - "capital of"
+      - "yes or no"
+    moderate:
+      - "explain"
+      - "compare"
+      - "summarize"
+      - "describe"
+      - "how does"
+    complex:
+      - "analyze"
+      - "design"
+      - "implement"
+      - "write a function"
+      - "evaluate the tradeoffs"
+
+  routing:
+    simple: small
+    moderate: medium
+    complex: large
+
+  quality_threshold: 0.8  # min quality score to accept small/medium model output
+
+benchmark:
+  concurrency: 10
+  warmup_requests: 3
+  requests_per_prompt: 5
+  max_tokens: 256
+  temperature: 0.0
+  prompts:
+    simple:
+      - "What is the capital of France?"
+      - "Define photosynthesis."
+      - "Who is the CEO of NVIDIA?"
+    moderate:
+      - "Explain the difference between TCP and UDP."
+      - "Summarize the benefits of microservices architecture."
+      - "How does a transformer model work?"
+    complex:
+      - "Design a distributed cache invalidation strategy for a multi-region deployment."
+      - "Write a Python function that implements A* pathfinding with diagonal movement."
+      - "Analyze the tradeoffs between speculative decoding and larger batch sizes for inference throughput."
+
+cost_analysis:
+  gpu_hours_per_month: 720
+  target_utilization: 0.5
+  api_comparison:
+    openai_gpt4o:
+      input_per_million: 2.50
+      output_per_million: 10.00
+    openai_gpt4o_mini:
+      input_per_million: 0.15
+      output_per_million: 0.60
+    anthropic_sonnet:
+      input_per_million: 3.00
+      output_per_million: 15.00
