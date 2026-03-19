@@ -1,0 +1,43 @@
+model:
+  name: Qwen/Qwen3.5-9B-FP8
+  type: dense
+  active_params: 9B
+  total_params: 9B
+  precision: fp8
+
+engines:
+  vllm:
+    port: 8010
+    extra_args:
+      - "--max-model-len"
+      - "4096"
+      - "--kv-cache-dtype"
+      - "fp8"
+      - "--max-num-batched-tokens"
+      - "8192"
+
+  sglang:
+    port: 8020
+    extra_args:
+      - "--kv-cache-dtype"
+      - "fp8_e4m3"
+      - "--context-length"
+      - "4096"
+      - "--chunked-prefill-size"
+      - "4096"
+
+  tensorrt_llm:
+    port: 8030
+    docker_image: "nvcr.io/nvidia/tritonserver:25.02-trtllm-python-py3"
+    extra_args: []
+
+benchmark:
+  concurrency_levels: [1, 10, 50, 100]
+  warmup_requests: 5
+  requests_per_prompt: 3
+  max_tokens: 256
+  temperature: 0.0
+
+hardware:
+  gpu: "NVIDIA H200 141GB HBM3e"
+  provider: "RunPod"

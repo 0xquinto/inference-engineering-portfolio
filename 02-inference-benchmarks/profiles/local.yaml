@@ -1,0 +1,15 @@
+model:
+  name: Qwen/Qwen3.5-4B
+  type: dense
+
+engines:
+  vllm:
+    port: 8010
+    extra_args:
+      - "--max-model-len"
+      - "4096"
+
+benchmark:
+  concurrency_levels: [1, 5, 10]
+  requests_per_prompt: 3
+  max_tokens: 128

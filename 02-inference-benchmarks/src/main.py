@@ -17,6 +17,7 @@ import yaml
 
 from .runners import VllmRunner, SglangRunner, TrtllmRunner
 from .metrics import LatencyTracker, ThroughputCalculator, get_gpu_memory
+from .profiles import load_profile
 
 RUNNERS = {
     "vllm": VllmRunner,
@@ -107,7 +108,10 @@ async def run_engine_benchmark(
 
 
 async def async_main(args):
-    config = load_config(args.config)
+    if args.profile:
+        config = load_profile(args.profile)
+    else:
+        config = load_config(args.config)
     prompts = load_prompts(args.prompts)
     model = config["model"]["name"]
     concurrency_levels = config["benchmark"]["concurrency_levels"]
@@ -132,6 +136,7 @@ async def async_main(args):
 def main():
     parser = argparse.ArgumentParser(description="Inference Stack Benchmarks")
     parser.add_argument("--engine", choices=["vllm", "sglang", "tensorrt-llm", "all"], default="all")
+    parser.add_argument("--profile", choices=["gpu", "local"], help="Hardware profile (gpu or local)")
     parser.add_argument("--config", default="configs/engines.yaml")
     parser.add_argument("--prompts", default="configs/prompts.json")
     parser.add_argument("--output", default="results/")
