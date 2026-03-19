@@ -14,9 +14,14 @@ def main():
     parser.add_argument("--step", choices=["quantize", "evaluate", "benchmark", "visualize", "all"],
                         default="all", help="Which pipeline step to run")
     parser.add_argument("--format", help="Run only this format (default: all)")
+    parser.add_argument("--profile", choices=["gpu", "local"], help="Hardware profile (gpu or local)")
     args = parser.parse_args()
 
-    cfg = load_config(Path(args.config))
+    if args.profile:
+        config_path = Path(f"profiles/{args.profile}.yaml")
+    else:
+        config_path = Path(args.config)
+    cfg = load_config(config_path)
 
     if args.list_formats:
         print("Available quantization formats:")

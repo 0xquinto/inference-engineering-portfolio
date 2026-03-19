@@ -37,6 +37,7 @@ class QuantizationRunner:
 
         dispatch = {
             "llm_compressor": self._run_llmcompressor,
+            "mlx": self._run_mlx,
         }
 
         if fmt.tool not in dispatch:
@@ -90,6 +91,11 @@ class QuantizationRunner:
             scheme="W4A16",
             ignore=["lm_head"],
         )
+
+    def _run_mlx(self, fmt: QuantFormat) -> QuantizeResult:
+        from .quantize_mlx import MLXQuantizationRunner
+        mlx_runner = MLXQuantizationRunner(self.model_name, str(self.output_dir))
+        return mlx_runner.quantize(fmt)
 
     def _fp8_recipe(self):
         from llmcompressor.modifiers.quantization import QuantizationModifier

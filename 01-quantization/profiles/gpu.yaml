@@ -1,0 +1,46 @@
+model:
+  name: Qwen/Qwen3.5-9B
+  type: dense
+  params: 9B
+  base_precision: bf16
+
+formats:
+  bf16:
+    description: "BF16 baseline (no quantization)"
+    tool: null
+  w4a16:
+    description: "INT4 weight-only quantization (W4A16 via GPTQ)"
+    tool: llm_compressor
+    bits: 4
+    group_size: 128
+    calibration_samples: 128
+    target_dtype: w4a16
+  fp8:
+    description: "FP8 W8A8 dynamic quantization"
+    tool: llm_compressor
+    target_dtype: fp8
+
+evaluation:
+  perplexity:
+    dataset: wikitext
+    subset: wikitext-2-raw-v1
+    split: test
+    max_samples: 500
+  mmlu:
+    num_tasks: 14
+    num_few_shot: 5
+    max_samples_per_task: 100
+
+benchmark:
+  engine: vllm
+  port: 8010
+  concurrency_levels: [1, 10, 50]
+  warmup_requests: 3
+  requests_per_prompt: 5
+  max_tokens: 256
+  temperature: 0.0
+  prompts:
+    - "What is the capital of France?"
+    - "Explain quantum computing in simple terms."
+    - "Write a Python function to check if a number is prime."
+    - "Summarize the key differences between TCP and UDP."

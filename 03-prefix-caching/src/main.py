@@ -8,6 +8,7 @@ import yaml
 
 def main():
     parser = argparse.ArgumentParser(description="Prefix Caching & KV Cache Optimization Benchmarks")
+    parser.add_argument("--profile", choices=["gpu", "local"], help="Hardware profile (gpu or local)")
     parser.add_argument("--config", default="configs/scenarios.yaml", help="Scenario config")
     parser.add_argument("--engines", default="configs/engines.yaml", help="Engine config")
     parser.add_argument("--output", default="results/", help="Output directory")
@@ -16,10 +17,16 @@ def main():
     parser.add_argument("--engine", choices=["vllm", "sglang"], default="vllm", help="Engine to benchmark")
     args = parser.parse_args()
 
-    with open(args.config) as f:
-        config = yaml.safe_load(f)
-    with open(args.engines) as f:
-        engines = yaml.safe_load(f)
+    if args.profile:
+        from .profiles import load_profile
+        profile = load_profile(args.profile)
+        config = profile
+        engines = profile
+    else:
+        with open(args.config) as f:
+            config = yaml.safe_load(f)
+        with open(args.engines) as f:
+            engines = yaml.safe_load(f)
 
     if args.list_scenarios:
         print("Available scenarios:")

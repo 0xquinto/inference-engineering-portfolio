@@ -1,0 +1,30 @@
+model:
+  name: Qwen/Qwen3.5-4B
+  type: dense
+  params: 4B
+
+scenarios:
+  shared_system_prompt:
+    description: "50 requests with identical system prompt"
+    system_prompt_tokens: 500
+    num_requests: 50
+    user_message_tokens: 30
+  multi_turn:
+    description: "5-turn conversations"
+    num_conversations: 5
+    turns_per_conversation: 5
+    tokens_per_turn: 50
+
+engines:
+  vllm:
+    port: 8010
+    prefix_caching_flag: "--enable-prefix-caching"
+    extra_args:
+      - "--max-model-len"
+      - "4096"
+
+benchmark:
+  concurrency: 5
+  warmup_requests: 2
+  max_tokens: 64
+  temperature: 0.0

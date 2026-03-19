@@ -1,0 +1,43 @@
+model:
+  name: Qwen/Qwen3.5-4B
+  type: dense
+  params: 4B
+  base_precision: bf16
+
+formats:
+  bf16:
+    description: "BF16 baseline (no quantization)"
+    tool: null
+  int4:
+    description: "INT4 weight-only quantization via MLX"
+    tool: mlx
+    bits: 4
+    group_size: 64
+  int8:
+    description: "INT8 quantization via MLX"
+    tool: mlx
+    bits: 8
+    group_size: 64
+
+evaluation:
+  perplexity:
+    dataset: wikitext
+    subset: wikitext-2-raw-v1
+    split: test
+    max_samples: 100
+  mmlu:
+    num_tasks: 5
+    num_few_shot: 5
+    max_samples_per_task: 50
+
+benchmark:
+  engine: vllm
+  port: 8010
+  concurrency_levels: [1, 5, 10]
+  warmup_requests: 2
+  requests_per_prompt: 3
+  max_tokens: 128
+  temperature: 0.0
+  prompts:
+    - "What is the capital of France?"
+    - "Explain quantum computing in simple terms."

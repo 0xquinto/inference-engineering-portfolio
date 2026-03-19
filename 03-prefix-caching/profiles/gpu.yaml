@@ -1,0 +1,50 @@
+model:
+  name: Qwen/Qwen3.5-9B
+  type: dense
+  params: 9B
+
+scenarios:
+  shared_system_prompt:
+    description: "100 requests with identical system prompt, varying user messages"
+    system_prompt_tokens: 1000
+    num_requests: 100
+    user_message_tokens: 50
+
+  multi_turn:
+    description: "10-turn conversations with growing history"
+    num_conversations: 10
+    turns_per_conversation: 10
+    tokens_per_turn: 100
+
+  rag_common_context:
+    description: "50 questions against the same retrieved document"
+    context_tokens: 3000
+    num_queries: 50
+    query_tokens: 30
+
+  cache_pressure:
+    description: "Increasing unique prefixes to find eviction cliff"
+    prefix_tokens: 500
+    unique_prefixes: [10, 25, 50, 100, 200, 500]
+    requests_per_prefix: 5
+
+engines:
+  vllm:
+    port: 8010
+    prefix_caching_flag: "--enable-prefix-caching"
+    extra_args:
+      - "--max-model-len"
+      - "8192"
+
+  sglang:
+    port: 8020
+    prefix_caching_flag: null  # RadixAttention is always on; disable with --disable-radix-cache
+    extra_args:
+      - "--context-length"
+      - "8192"
+
+benchmark:
+  concurrency: 10
+  warmup_requests: 3
+  max_tokens: 128
+  temperature: 0.0
