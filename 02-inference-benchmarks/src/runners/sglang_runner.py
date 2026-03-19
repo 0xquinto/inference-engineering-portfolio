@@ -11,8 +11,8 @@ SGLANG_VENV_PYTHON = "/workspace/venvs/sglang/bin/python"
 class SglangRunner(BenchmarkRunner):
     """Runs SGLang as a subprocess and benchmarks it."""
 
-    def __init__(self, port: int = 8002):
-        super().__init__("sglang", port)
+    def __init__(self, port: int = 8002, model_name: str = "default"):
+        super().__init__("sglang", port, model_name=model_name)
 
     async def start_server(self, model: str, extra_args: list[str] | None = None) -> None:
         python_bin = SGLANG_VENV_PYTHON if os.path.exists(SGLANG_VENV_PYTHON) else "python"

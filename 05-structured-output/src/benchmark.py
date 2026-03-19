@@ -43,11 +43,13 @@ class StructuredBenchmarker:
     def __init__(
         self, port: int = 8010, max_tokens: int = 512,
         temperature: float = 0.0, max_retries: int = 3,
+        model_name: str = "default",
     ):
         self.base_url = f"http://localhost:{port}"
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.max_retries = max_retries
+        self.model_name = model_name
 
     async def send_request(
         self, prompt: str, schema: dict | None, backend_name: str,
@@ -64,7 +66,7 @@ class StructuredBenchmarker:
 
         for attempt in range(max_attempts):
             payload = {
-                "model": "default",
+                "model": self.model_name,
                 "messages": [{"role": "user", "content": prompt}],
                 "max_tokens": self.max_tokens,
                 "temperature": self.temperature,

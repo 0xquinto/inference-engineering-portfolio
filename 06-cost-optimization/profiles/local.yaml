@@ -3,14 +3,16 @@ models:
     name: Qwen/Qwen3.5-0.8B
     params: 0.8B
     description: "On-device fast model (M4 MacBook)"
-    port: 8010
+    port: 11434
+    model_id: "qwen3.5:0.8b"
     gpu_cost_per_hour: 0.0
     vram_mb: 1600
   local_medium:
     name: Qwen/Qwen3.5-4B
     params: 4B
     description: "On-device balanced model (M4 MacBook)"
-    port: 8011
+    port: 11434
+    model_id: "qwen3.5:4b"
     gpu_cost_per_hour: 0.0
     vram_mb: 8000
   cloud:
@@ -18,6 +20,7 @@ models:
     params: 9B
     description: "Cloud GPU for complex queries"
     port: 8012
+    model_id: "default"
     gpu_cost_per_hour: 0.75
     vram_mb: 14200
 

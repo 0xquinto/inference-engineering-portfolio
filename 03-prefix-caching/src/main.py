@@ -53,7 +53,8 @@ async def async_main(args, config, engines):
     engine_cfg = engines["engines"][args.engine]
     port = engine_cfg["port"]
     bench_cfg = config["benchmark"]
-    benchmarker = CacheBenchmarker(port=port, max_tokens=bench_cfg["max_tokens"])
+    model_id = engine_cfg.get("model_id", bench_cfg.get("model_id", "default"))
+    benchmarker = CacheBenchmarker(port=port, max_tokens=bench_cfg["max_tokens"], model_name=model_id)
     metrics = CacheMetrics()
     all_summaries = {}
 

@@ -20,7 +20,8 @@ methods:
     num_speculative_tokens: 5
 
 benchmark:
-  port: 8010
+  port: 11434
+  model_id: "qwen3.5:4b"
   qps_levels: [1, 5, 10]
   warmup_requests: 2
   requests_per_prompt: 3

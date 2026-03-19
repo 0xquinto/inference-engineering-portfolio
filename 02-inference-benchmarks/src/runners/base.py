@@ -34,10 +34,11 @@ class BenchmarkResult:
 class BenchmarkRunner(ABC):
     """Base class for all inference engine benchmark runners."""
 
-    def __init__(self, engine_name: str, port: int):
+    def __init__(self, engine_name: str, port: int, model_name: str = "default"):
         self.engine_name = engine_name
         self.port = port
         self.base_url = f"http://localhost:{port}"
+        self.model_name = model_name
         self._process = None
 
     @abstractmethod
@@ -75,6 +76,7 @@ class BenchmarkRunner(ABC):
         """Send a single chat completion request and measure metrics."""
         cfg = config or RequestConfig()
         payload = {
+            "model": self.model_name,
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": cfg.max_tokens,
             "temperature": cfg.temperature,

@@ -46,7 +46,8 @@ async def run_engine_benchmark(
     """Run full benchmark suite for a single engine."""
     engine_cfg = config["engines"][engine_name.replace("-", "_")]
     runner_cls = RUNNERS[engine_name]
-    runner = runner_cls(port=engine_cfg["port"])
+    model_id = engine_cfg.get("model_id", "default")
+    runner = runner_cls(port=engine_cfg["port"], model_name=model_id)
 
     print(f"\n{'='*60}")
     print(f"Benchmarking: {engine_name}")

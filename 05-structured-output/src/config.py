@@ -45,6 +45,7 @@ class StructuredConfig:
     schemas: list[SchemaLevel]
     concurrency_levels: list[int]
     port: int = 8010
+    model_id: str = "default"
     warmup_requests: int = 3
     requests_per_prompt: int = 10
     max_tokens: int = 512
@@ -74,6 +75,7 @@ def load_config(path: Path) -> StructuredConfig:
         schemas=schemas,
         concurrency_levels=bench.get("concurrency_levels", [1, 10, 50]),
         port=bench.get("port", 8010),
+        model_id=bench.get("model_id", "default"),
         warmup_requests=bench.get("warmup_requests", 3),
         requests_per_prompt=bench.get("requests_per_prompt", 10),
         max_tokens=bench.get("max_tokens", 512),

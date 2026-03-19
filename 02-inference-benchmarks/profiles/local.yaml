@@ -4,7 +4,8 @@ model:
 
 engines:
   vllm:
-    port: 8010
+    port: 11434
+    model_id: "qwen3.5:4b"
     extra_args:
       - "--max-model-len"
       - "4096"

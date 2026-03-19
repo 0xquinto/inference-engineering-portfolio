@@ -68,6 +68,7 @@ async def async_main(args, cfg):
         benchmarker = StructuredBenchmarker(
             port=cfg.port, max_tokens=cfg.max_tokens,
             temperature=cfg.temperature, max_retries=cfg.max_retries,
+            model_name=cfg.model_id,
         )
 
         for backend in backends:

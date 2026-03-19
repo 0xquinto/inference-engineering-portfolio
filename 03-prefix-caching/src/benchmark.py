@@ -8,14 +8,15 @@ from .metrics import RequestMetric, CacheMetrics
 
 
 class CacheBenchmarker:
-    def __init__(self, port: int = 8010, max_tokens: int = 128, temperature: float = 0.0):
+    def __init__(self, port: int = 8010, max_tokens: int = 128, temperature: float = 0.0, model_name: str = "default"):
         self.base_url = f"http://localhost:{port}"
         self.max_tokens = max_tokens
         self.temperature = temperature
+        self.model_name = model_name
 
     def _build_payload(self, messages: list[dict]) -> dict:
         return {
-            "model": "default",
+            "model": self.model_name,
             "messages": messages,
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,

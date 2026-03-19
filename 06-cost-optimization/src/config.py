@@ -13,6 +13,7 @@ class ModelTier:
     port: int
     gpu_cost_per_hour: float
     vram_mb: int
+    model_id: str = "default"
 
     @classmethod
     def from_dict(cls, name: str, data: dict) -> "ModelTier":
@@ -24,6 +25,7 @@ class ModelTier:
             port=data.get("port", 8010),
             gpu_cost_per_hour=data.get("gpu_cost_per_hour", 0.0),
             vram_mb=data.get("vram_mb", 0),
+            model_id=data.get("model_id", "default"),
         )
 
 

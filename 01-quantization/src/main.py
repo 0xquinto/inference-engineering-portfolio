@@ -72,7 +72,7 @@ async def async_main(args, cfg):
     if args.step in ("benchmark", "all"):
         print("\n=== Step 3: Performance Benchmarks ===")
         from .benchmark import PerfBenchmarker
-        benchmarker = PerfBenchmarker(port=cfg.engine_port, max_tokens=cfg.max_tokens)
+        benchmarker = PerfBenchmarker(port=cfg.engine_port, max_tokens=cfg.max_tokens, model_name=cfg.model_id)
         for fmt in formats:
             print(f"  Benchmarking {fmt.name}...")
             for conc in cfg.concurrency_levels:

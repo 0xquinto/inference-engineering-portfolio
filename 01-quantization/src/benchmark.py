@@ -49,14 +49,15 @@ class BenchmarkResult:
 
 
 class PerfBenchmarker:
-    def __init__(self, port: int = 8010, max_tokens: int = 256, temperature: float = 0.0):
+    def __init__(self, port: int = 8010, max_tokens: int = 256, temperature: float = 0.0, model_name: str = "default"):
         self.base_url = f"http://localhost:{port}"
         self.max_tokens = max_tokens
         self.temperature = temperature
+        self.model_name = model_name
 
     async def send_request(self, prompt: str, format_name: str, concurrency: int) -> BenchmarkResult:
         payload = {
-            "model": "default",
+            "model": self.model_name,
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,

@@ -80,6 +80,7 @@ class SpecConfig:
     benchmark_prompts: list[str]
     qps_levels: list[int]
     port: int = 8010
+    model_id: str = "default"
     warmup_requests: int = 5
     requests_per_prompt: int = 10
     max_tokens: int = 256
@@ -103,6 +104,7 @@ def load_config(path: Path) -> SpecConfig:
         benchmark_prompts=bench.get("prompts", []),
         qps_levels=bench.get("qps_levels", [1, 5, 10, 25, 50]),
         port=bench.get("port", 8010),
+        model_id=bench.get("model_id", "default"),
         warmup_requests=bench.get("warmup_requests", 5),
         requests_per_prompt=bench.get("requests_per_prompt", 10),
         max_tokens=bench.get("max_tokens", 256),

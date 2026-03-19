@@ -52,7 +52,7 @@ async def async_main(args, cfg):
         from .benchmark import SpecBenchmarker
         from .methods import SpecMethodTracker
 
-        benchmarker = SpecBenchmarker(port=cfg.port, max_tokens=cfg.max_tokens, temperature=cfg.temperature)
+        benchmarker = SpecBenchmarker(port=cfg.port, max_tokens=cfg.max_tokens, temperature=cfg.temperature, model_name=cfg.model_id)
         tracker = SpecMethodTracker()
 
         for method in methods:

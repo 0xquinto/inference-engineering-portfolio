@@ -12,8 +12,8 @@ VLLM_VENV_BIN = "/workspace/venvs/vllm/bin/vllm"
 class VllmRunner(BenchmarkRunner):
     """Runs vLLM as a subprocess and benchmarks it."""
 
-    def __init__(self, port: int = 8001):
-        super().__init__("vllm", port)
+    def __init__(self, port: int = 8001, model_name: str = "default"):
+        super().__init__("vllm", port, model_name=model_name)
 
     async def start_server(self, model: str, extra_args: list[str] | None = None) -> None:
         vllm_bin = VLLM_VENV_BIN if os.path.exists(VLLM_VENV_BIN) else shutil.which("vllm") or "vllm"

@@ -8,8 +8,8 @@ from .base import BenchmarkRunner
 class TrtllmRunner(BenchmarkRunner):
     """Runs TensorRT-LLM via Docker and benchmarks it."""
 
-    def __init__(self, port: int = 8003, docker_image: str = "nvcr.io/nvidia/tritonserver:25.02-trtllm-python-py3"):
-        super().__init__("tensorrt-llm", port)
+    def __init__(self, port: int = 8003, model_name: str = "default", docker_image: str = "nvcr.io/nvidia/tritonserver:25.02-trtllm-python-py3"):
+        super().__init__("tensorrt-llm", port, model_name=model_name)
         self.docker_image = docker_image
         self._container_id = None
 

@@ -45,6 +45,7 @@ class CascadeBenchmarker:
         models: dict[str, int],
         max_tokens: int = 256,
         temperature: float = 0.0,
+        model_ids: dict[str, str] | None = None,
     ):
         """Initialize benchmarker.
 
@@ -52,16 +53,18 @@ class CascadeBenchmarker:
             models: Maps tier name (e.g. "small") to port number.
             max_tokens: Max tokens to generate per request.
             temperature: Sampling temperature.
+            model_ids: Maps tier name to API model field. Defaults to "default" for all.
         """
         self.models = models
         self.max_tokens = max_tokens
         self.temperature = temperature
+        self.model_ids = model_ids or {}
 
     async def send_request(
         self, prompt: str, port: int, model_name: str, complexity: str
     ) -> CascadeResult:
         payload = {
-            "model": "default",
+            "model": self.model_ids.get(model_name, "default"),
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,

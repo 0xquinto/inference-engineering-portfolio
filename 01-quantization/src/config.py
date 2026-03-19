@@ -44,6 +44,7 @@ class QuantConfig:
     benchmark_prompts: list[str]
     concurrency_levels: list[int]
     engine_port: int = 8010
+    model_id: str = "default"
     warmup_requests: int = 3
     requests_per_prompt: int = 5
     max_tokens: int = 256
@@ -71,6 +72,7 @@ def load_config(path: Path) -> QuantConfig:
         benchmark_prompts=bench.get("prompts", []),
         concurrency_levels=bench.get("concurrency_levels", [1, 10, 50]),
         engine_port=bench.get("port", 8010),
+        model_id=bench.get("model_id", "default"),
         warmup_requests=bench.get("warmup_requests", 3),
         requests_per_prompt=bench.get("requests_per_prompt", 5),
         max_tokens=bench.get("max_tokens", 256),

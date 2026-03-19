@@ -56,10 +56,12 @@ async def async_main(args, cfg):
         from .benchmark import CascadeBenchmarker
 
         model_ports = {m.name: m.port for m in cfg.models}
+        model_ids = {m.name: m.model_id for m in cfg.models}
         benchmarker = CascadeBenchmarker(
             models=model_ports,
             max_tokens=cfg.max_tokens,
             temperature=cfg.temperature,
+            model_ids=model_ids,
         )
 
         results = await benchmarker.run_cascade(

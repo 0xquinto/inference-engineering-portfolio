@@ -11,6 +11,8 @@ class TestLoadProfile:
         profile = load_profile("local", Path(__file__).parent.parent / "profiles")
         assert profile["model"]["name"] == "Qwen/Qwen3.5-4B"
         assert profile["formats"]["int4"]["tool"] == "mlx"
+        assert profile["benchmark"]["port"] == 11434
+        assert profile["benchmark"]["model_id"] == "qwen3.5:4b"
 
     def test_invalid_profile_raises(self):
         with pytest.raises(FileNotFoundError):
