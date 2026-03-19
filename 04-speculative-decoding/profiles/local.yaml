@@ -1,0 +1,32 @@
+model:
+  name: Qwen/Qwen3.5-4B
+  type: dense
+  params: 4B
+
+methods:
+  baseline:
+    description: "Autoregressive decoding (no speculation)"
+    spec_type: null
+  ngram:
+    description: "N-gram suffix matching (no extra model)"
+    spec_type: ngram
+    ngram_prompt_lookup_max: 5
+    ngram_prompt_lookup_min: 2
+    num_speculative_tokens: 5
+  draft_model:
+    description: "Small draft model verification"
+    spec_type: draft_model
+    draft_model: Qwen/Qwen3.5-0.8B
+    num_speculative_tokens: 5
+
+benchmark:
+  port: 8010
+  qps_levels: [1, 5, 10]
+  warmup_requests: 2
+  requests_per_prompt: 3
+  max_tokens: 128
+  temperature: 0.0
+  prompts:
+    - "What is the capital of France?"
+    - "Explain quantum computing in simple terms."
+    - "Write a Python function to check if a number is prime."

@@ -9,6 +9,8 @@ from .config import load_config
 def main():
     parser = argparse.ArgumentParser(description="Speculative Decoding Benchmarks for vLLM")
     parser.add_argument("--config", default="configs/speculative.yaml", help="Config file path")
+    parser.add_argument("--profile", choices=["gpu", "local"],
+                        help="Hardware profile (gpu or local)")
     parser.add_argument("--output", default="results/", help="Output directory for results")
     parser.add_argument("--list-methods", action="store_true", help="List available speculative methods")
     parser.add_argument("--method", help="Run only this method (default: all)")
@@ -16,7 +18,11 @@ def main():
                         default="all", help="Which pipeline step to run")
     args = parser.parse_args()
 
-    cfg = load_config(Path(args.config))
+    if args.profile:
+        config_path = Path(f"profiles/{args.profile}.yaml")
+    else:
+        config_path = Path(args.config)
+    cfg = load_config(config_path)
 
     if args.list_methods:
         print("Available speculative decoding methods:")
