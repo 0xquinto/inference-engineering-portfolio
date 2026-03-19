@@ -10,6 +10,7 @@ from .schemas import get_schema, get_prompt
 def main():
     parser = argparse.ArgumentParser(description="Structured Output & Constrained Decoding Benchmarks")
     parser.add_argument("--config", default="configs/structured.yaml", help="Config file path")
+    parser.add_argument("--profile", choices=["gpu", "local"], help="Hardware profile (gpu or local)")
     parser.add_argument("--output", default="results/", help="Output directory for results")
     parser.add_argument("--list-backends", action="store_true", help="List available backends")
     parser.add_argument("--list-schemas", action="store_true", help="List schema complexity levels")
@@ -19,7 +20,11 @@ def main():
                         default="all", help="Which pipeline step to run")
     args = parser.parse_args()
 
-    cfg = load_config(Path(args.config))
+    if args.profile:
+        config_path = Path(f"profiles/{args.profile}.yaml")
+    else:
+        config_path = Path(args.config)
+    cfg = load_config(config_path)
 
     if args.list_backends:
         print("Available backends:")

@@ -1,0 +1,30 @@
+model:
+  name: Qwen/Qwen3.5-4B
+  type: dense
+  params: 4B
+
+backends:
+  xgrammar:
+    description: "XGrammar guided decoding"
+    guided_decoding_backend: xgrammar
+  unconstrained:
+    description: "No grammar enforcement (baseline + retry)"
+    guided_decoding_backend: null
+
+schemas:
+  simple_json:
+    description: "Flat JSON object with 3 string fields"
+    complexity: low
+  function_call:
+    description: "Tool-calling schema with dynamic function selection"
+    complexity: high
+
+benchmark:
+  engine: vllm
+  port: 8010
+  concurrency_levels: [1, 5]
+  warmup_requests: 2
+  requests_per_prompt: 3
+  max_tokens: 256
+  temperature: 0.0
+  max_retries: 3

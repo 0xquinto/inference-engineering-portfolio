@@ -1,0 +1,36 @@
+model:
+  name: Qwen/Qwen3.5-9B
+  type: dense
+  params: 9B
+
+backends:
+  xgrammar:
+    description: "XGrammar guided decoding (default in vLLM/SGLang)"
+    guided_decoding_backend: xgrammar
+  outlines:
+    description: "Outlines guided decoding"
+    guided_decoding_backend: outlines
+  unconstrained:
+    description: "No grammar enforcement (baseline + retry)"
+    guided_decoding_backend: null
+
+schemas:
+  simple_json:
+    description: "Flat JSON object with 3 string fields"
+    complexity: low
+  nested_object:
+    description: "Nested JSON with arrays and sub-objects"
+    complexity: medium
+  function_call:
+    description: "Tool-calling schema with dynamic function selection"
+    complexity: high
+
+benchmark:
+  engine: vllm
+  port: 8010
+  concurrency_levels: [1, 10, 50]
+  warmup_requests: 3
+  requests_per_prompt: 10
+  max_tokens: 512
+  temperature: 0.0
+  max_retries: 3
