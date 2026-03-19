@@ -10,12 +10,17 @@ def main():
     parser = argparse.ArgumentParser(description="LLM Cascade & Cost Optimization Analysis")
     parser.add_argument("--config", default="configs/cost.yaml", help="Config file path")
     parser.add_argument("--output", default="results/", help="Output directory for results")
+    parser.add_argument("--profile", choices=["gpu", "local"], help="Hardware profile (gpu or local)")
     parser.add_argument("--list-models", action="store_true", help="List available model tiers")
     parser.add_argument("--step", choices=["benchmark", "analyze", "visualize", "all"],
                         default="all", help="Which pipeline step to run")
     args = parser.parse_args()
 
-    cfg = load_config(Path(args.config))
+    if args.profile:
+        config_path = Path(f"profiles/{args.profile}.yaml")
+    else:
+        config_path = Path(args.config)
+    cfg = load_config(config_path)
 
     if args.list_models:
         print("Available model tiers:")

@@ -127,3 +127,9 @@ class TestCascadeCostEstimate:
         result = cascade_cost_estimate([], [])
         assert result["blended_cost_per_million"] == 0.0
         assert result["distribution"] == {}
+
+
+def test_local_models_zero_cost():
+    """Verify $0/hr local hardware produces $0/M token cost."""
+    cost = calculate_cost_per_million_tokens(tps=100.0, gpu_cost_per_hour=0.0)
+    assert cost == 0.0

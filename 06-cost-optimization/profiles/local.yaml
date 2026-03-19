@@ -1,0 +1,78 @@
+models:
+  local_small:
+    name: Qwen/Qwen3.5-0.8B
+    params: 0.8B
+    description: "On-device fast model (M4 MacBook)"
+    port: 8010
+    gpu_cost_per_hour: 0.0
+    vram_mb: 1600
+  local_medium:
+    name: Qwen/Qwen3.5-4B
+    params: 4B
+    description: "On-device balanced model (M4 MacBook)"
+    port: 8011
+    gpu_cost_per_hour: 0.0
+    vram_mb: 8000
+  cloud:
+    name: Qwen/Qwen3.5-9B
+    params: 9B
+    description: "Cloud GPU for complex queries"
+    port: 8012
+    gpu_cost_per_hour: 0.75
+    vram_mb: 14200
+
+cascade:
+  complexity_keywords:
+    simple:
+      - "what is"
+      - "who is"
+      - "define"
+      - "capital of"
+      - "yes or no"
+    moderate:
+      - "explain"
+      - "compare"
+      - "summarize"
+      - "describe"
+      - "how does"
+    complex:
+      - "analyze"
+      - "design"
+      - "implement"
+      - "write a function"
+      - "evaluate the tradeoffs"
+  routing:
+    simple: local_small
+    moderate: local_medium
+    complex: cloud
+  quality_threshold: 0.8
+
+benchmark:
+  concurrency: 5
+  warmup_requests: 2
+  requests_per_prompt: 3
+  max_tokens: 128
+  temperature: 0.0
+  prompts:
+    simple:
+      - "What is the capital of France?"
+      - "Define photosynthesis."
+    moderate:
+      - "Explain the difference between TCP and UDP."
+      - "How does a transformer model work?"
+    complex:
+      - "Design a distributed cache invalidation strategy for a multi-region deployment."
+
+cost_analysis:
+  gpu_hours_per_month: 720
+  target_utilization: 0.5
+  api_comparison:
+    openai_gpt4o:
+      input_per_million: 2.50
+      output_per_million: 10.00
+    openai_gpt4o_mini:
+      input_per_million: 0.15
+      output_per_million: 0.60
+    anthropic_sonnet:
+      input_per_million: 3.00
+      output_per_million: 15.00
