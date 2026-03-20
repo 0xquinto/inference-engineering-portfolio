@@ -4,9 +4,9 @@ model:
   params: 4B
 
 backends:
-  xgrammar:
-    description: "XGrammar guided decoding"
-    guided_decoding_backend: xgrammar
+  json_schema:
+    description: "JSON schema constrained decoding"
+    guided_decoding_backend: json_schema
   unconstrained:
     description: "No grammar enforcement (baseline + retry)"
     guided_decoding_backend: null
@@ -20,12 +20,13 @@ schemas:
     complexity: high
 
 benchmark:
-  engine: vllm
+  engine: ollama
   port: 11434
   model_id: "qwen3.5:4b"
+  schema_format: response_format  # OpenAI-standard (works with Ollama)
   concurrency_levels: [1, 5]
   warmup_requests: 2
   requests_per_prompt: 3
-  max_tokens: 256
+  max_tokens: 512
   temperature: 0.0
   max_retries: 3

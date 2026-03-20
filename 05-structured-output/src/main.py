@@ -69,6 +69,7 @@ async def async_main(args, cfg):
             port=cfg.port, max_tokens=cfg.max_tokens,
             temperature=cfg.temperature, max_retries=cfg.max_retries,
             model_name=cfg.model_id,
+            schema_format=cfg.schema_format,
         )
 
         for backend in backends:

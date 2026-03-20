@@ -44,12 +44,14 @@ class StructuredBenchmarker:
         self, port: int = 8010, max_tokens: int = 512,
         temperature: float = 0.0, max_retries: int = 3,
         model_name: str = "default",
+        schema_format: str = "guided_json",
     ):
         self.base_url = f"http://localhost:{port}"
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.max_retries = max_retries
         self.model_name = model_name
+        self.schema_format = schema_format
 
     async def send_request(
         self, prompt: str, schema: dict | None, backend_name: str,
@@ -73,7 +75,17 @@ class StructuredBenchmarker:
                 "stream": True,
             }
             if is_constrained and schema is not None:
-                payload["guided_json"] = schema
+                if self.schema_format == "response_format":
+                    payload["response_format"] = {
+                        "type": "json_schema",
+                        "json_schema": {
+                            "name": schema_name,
+                            "strict": True,
+                            "schema": schema,
+                        },
+                    }
+                else:
+                    payload["guided_json"] = schema
 
             ttft_ms = 0.0
             tokens = 0

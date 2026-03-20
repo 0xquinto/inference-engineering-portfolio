@@ -1,0 +1,30 @@
+{
+  "json_schema": {
+    "simple_json": {
+      "ttft_p50": 11392.892041010782,
+      "throughput_p50": 7.675205613132976,
+      "validity_rate": 1.0,
+      "avg_retries": 0.0
+    },
+    "function_call": {
+      "ttft_p50": 16946.711707976647,
+      "throughput_p50": 12.4305544265205,
+      "validity_rate": 0.0,
+      "avg_retries": 0.0
+    }
+  },
+  "unconstrained": {
+    "simple_json": {
+      "ttft_p50": 12571.106166986283,
+      "throughput_p50": 8.56166527624371,
+      "validity_rate": 0.0,
+      "avg_retries": 4.0
+    },
+    "function_call": {
+      "ttft_p50": 16636.799082974903,
+      "throughput_p50": 9.332466875451496,
+      "validity_rate": 0.0,
+      "avg_retries": 4.0
+    }
+  }
+}
