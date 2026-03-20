@@ -1,5 +1,6 @@
 import asyncio
 import json
+import re
 import time
 from dataclasses import dataclass
 
@@ -118,6 +119,8 @@ class StructuredBenchmarker:
             total_tokens += tokens
 
             output_text = "".join(content_parts)
+            # Strip <think>...</think> tags from thinking models (e.g. Qwen3.5)
+            output_text = re.sub(r"<think>.*?</think>", "", output_text, flags=re.DOTALL).strip()
             valid = validate_output(schema_name, output_text)
 
             if valid:

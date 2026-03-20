@@ -1,4 +1,5 @@
 import json
+import re
 
 SCHEMAS = {
     "simple_json": {
@@ -97,8 +98,16 @@ def get_prompt(level_name: str) -> str:
     return PROMPTS[level_name]
 
 
+def strip_think_tags(text: str) -> str:
+    """Strip <think>...</think> tags from model output (e.g. Qwen3.5)."""
+    if not text:
+        return text
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
+
 def validate_output(level_name: str, output: str) -> bool:
     """Validate that output conforms to the schema for the given level."""
+    output = strip_think_tags(output)
     try:
         data = json.loads(output)
     except (json.JSONDecodeError, TypeError):

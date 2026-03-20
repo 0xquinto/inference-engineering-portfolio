@@ -1,0 +1,34 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project:
+          - 01-quantization
+          - 02-inference-benchmarks
+          - 03-prefix-caching
+          - 04-speculative-decoding
+          - 05-structured-output
+          - 06-cost-optimization
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install httpx pyyaml pandas matplotlib pytest pytest-asyncio tqdm
+
+      - name: Run tests
+        run: python -m pytest ${{ matrix.project }}/ -v
