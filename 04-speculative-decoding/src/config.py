@@ -1,5 +1,5 @@
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
@@ -37,40 +37,39 @@ class SpecMethod:
         if self.is_baseline:
             return []
 
-        args = []
+        config = {}
 
         if self.spec_type == "eagle":
+            config["method"] = "eagle"
             if self.draft_model:
-                args.extend(["--speculative-model", self.draft_model])
-            else:
-                args.extend(["--speculative-model", "[eagle_head]"])
+                config["model"] = self.draft_model
             if self.num_speculative_tokens is not None:
-                args.extend(["--num-speculative-tokens", str(self.num_speculative_tokens)])
+                config["num_speculative_tokens"] = self.num_speculative_tokens
             if self.parallel_drafting:
-                spec_cfg = json.dumps({"parallel_drafting": True})
-                args.extend(["--speculative-config", spec_cfg])
+                config["parallel_drafting"] = True
 
         elif self.spec_type == "ngram":
-            args.extend(["--speculative-model", "[ngram]"])
+            config["method"] = "ngram"
             if self.num_speculative_tokens is not None:
-                args.extend(["--num-speculative-tokens", str(self.num_speculative_tokens)])
+                config["num_speculative_tokens"] = self.num_speculative_tokens
             if self.ngram_prompt_lookup_max is not None:
-                args.extend(["--ngram-prompt-lookup-max", str(self.ngram_prompt_lookup_max)])
+                config["prompt_lookup_max"] = self.ngram_prompt_lookup_max
             if self.ngram_prompt_lookup_min is not None:
-                args.extend(["--ngram-prompt-lookup-min", str(self.ngram_prompt_lookup_min)])
+                config["prompt_lookup_min"] = self.ngram_prompt_lookup_min
 
         elif self.spec_type == "draft_model":
+            config["method"] = "draft_model"
             if self.draft_model:
-                args.extend(["--speculative-model", self.draft_model])
+                config["model"] = self.draft_model
             if self.num_speculative_tokens is not None:
-                args.extend(["--num-speculative-tokens", str(self.num_speculative_tokens)])
+                config["num_speculative_tokens"] = self.num_speculative_tokens
 
         elif self.spec_type == "mtp":
-            args.extend(["--speculative-model", "[mtp]"])
+            config["method"] = "mtp"
             if self.num_speculative_tokens is not None:
-                args.extend(["--num-speculative-tokens", str(self.num_speculative_tokens)])
+                config["num_speculative_tokens"] = self.num_speculative_tokens
 
-        return args
+        return ["--speculative_config", json.dumps(config)]
 
 
 @dataclass

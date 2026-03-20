@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from src.config import SpecMethod, SpecConfig, load_config
@@ -60,29 +61,7 @@ class TestSpecMethod:
         method = SpecMethod.from_dict("baseline", {"description": "baseline", "spec_type": None})
         assert method.vllm_args() == []
 
-    def test_vllm_args_eagle(self):
-        method = SpecMethod.from_dict("eagle3", {
-            "description": "eagle",
-            "spec_type": "eagle",
-            "num_speculative_tokens": 5,
-        })
-        args = method.vllm_args()
-        assert "--speculative-model" in args
-        assert "[eagle_head]" in args
-        assert "--num-speculative-tokens" in args
-        assert "5" in args
-
-    def test_vllm_args_eagle_parallel(self):
-        method = SpecMethod.from_dict("p_eagle", {
-            "description": "parallel eagle",
-            "spec_type": "eagle",
-            "num_speculative_tokens": 5,
-            "parallel_drafting": True,
-        })
-        args = method.vllm_args()
-        assert "--speculative-config" in args
-
-    def test_vllm_args_ngram(self):
+    def test_vllm_args_ngram_uses_speculative_config(self):
         method = SpecMethod.from_dict("ngram", {
             "description": "ngram",
             "spec_type": "ngram",
@@ -91,26 +70,14 @@ class TestSpecMethod:
             "num_speculative_tokens": 5,
         })
         args = method.vllm_args()
-        assert "--speculative-model" in args
-        assert "[ngram]" in args
-        assert "--ngram-prompt-lookup-max" in args
-        assert "5" in args
-        assert "--ngram-prompt-lookup-min" in args
-        assert "2" in args
+        assert args[0] == "--speculative_config"
+        config = json.loads(args[1])
+        assert config["method"] == "ngram"
+        assert config["num_speculative_tokens"] == 5
+        assert config["prompt_lookup_max"] == 5
+        assert config["prompt_lookup_min"] == 2
 
-    def test_vllm_args_mtp(self):
-        method = SpecMethod.from_dict("mtp", {
-            "description": "Multi-Token Prediction",
-            "spec_type": "mtp",
-            "num_speculative_tokens": 1,
-        })
-        args = method.vllm_args()
-        assert "--speculative-model" in args
-        assert "[mtp]" in args
-        assert "--num-speculative-tokens" in args
-        assert "1" in args
-
-    def test_vllm_args_draft_model(self):
+    def test_vllm_args_draft_model_uses_speculative_config(self):
         method = SpecMethod.from_dict("draft_model", {
             "description": "draft",
             "spec_type": "draft_model",
@@ -118,10 +85,48 @@ class TestSpecMethod:
             "num_speculative_tokens": 5,
         })
         args = method.vllm_args()
-        assert "--speculative-model" in args
-        assert "Qwen/Qwen3.5-0.8B" in args
-        assert "--num-speculative-tokens" in args
-        assert "5" in args
+        assert args[0] == "--speculative_config"
+        config = json.loads(args[1])
+        assert config["method"] == "draft_model"
+        assert config["model"] == "Qwen/Qwen3.5-0.8B"
+        assert config["num_speculative_tokens"] == 5
+
+    def test_vllm_args_mtp_uses_speculative_config(self):
+        method = SpecMethod.from_dict("mtp", {
+            "description": "MTP",
+            "spec_type": "mtp",
+            "num_speculative_tokens": 1,
+        })
+        args = method.vllm_args()
+        assert args[0] == "--speculative_config"
+        config = json.loads(args[1])
+        assert config["method"] == "mtp"
+        assert config["num_speculative_tokens"] == 1
+
+    def test_vllm_args_eagle_uses_speculative_config(self):
+        method = SpecMethod.from_dict("eagle3", {
+            "description": "eagle",
+            "spec_type": "eagle",
+            "num_speculative_tokens": 5,
+        })
+        args = method.vllm_args()
+        assert args[0] == "--speculative_config"
+        config = json.loads(args[1])
+        assert config["method"] == "eagle"
+        assert config["num_speculative_tokens"] == 5
+
+    def test_vllm_args_eagle_parallel_uses_speculative_config(self):
+        method = SpecMethod.from_dict("p_eagle", {
+            "description": "parallel eagle",
+            "spec_type": "eagle",
+            "num_speculative_tokens": 5,
+            "parallel_drafting": True,
+        })
+        args = method.vllm_args()
+        assert args[0] == "--speculative_config"
+        config = json.loads(args[1])
+        assert config["method"] == "eagle"
+        assert config.get("parallel_drafting") is True
 
 
 class TestLoadConfig:
