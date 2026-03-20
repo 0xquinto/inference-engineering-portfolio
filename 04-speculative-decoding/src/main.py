@@ -45,7 +45,21 @@ async def async_main(args, cfg):
             print(f"Error: method '{args.method}' not found")
             return
 
-    all_results = {}
+    results_file = output / "speculative_results.json"
+
+    def _load_results(path):
+        """Load results JSON, returning {} on missing or corrupted file."""
+        if not path.exists():
+            return {}
+        try:
+            with open(path) as f:
+                return json.load(f)
+        except (json.JSONDecodeError, ValueError):
+            print(f"  Warning: corrupted {path}, starting fresh")
+            return {}
+
+    # Load existing results when running a single method to preserve other methods' data
+    all_results = _load_results(results_file) if args.method else {}
 
     if args.step in ("benchmark", "all"):
         print("=== Step 1: Speculative Decoding Benchmarks ===")
@@ -82,13 +96,15 @@ async def async_main(args, cfg):
 
     if args.step in ("visualize", "all"):
         print("\n=== Step 2: Visualization ===")
+        # Load results from file when running visualize standalone
+        if not all_results:
+            all_results = _load_results(results_file)
         from .visualize import plot_ttft_by_qps, plot_throughput_by_qps, plot_speedup_heatmap
         plot_ttft_by_qps(all_results, str(output))
         plot_throughput_by_qps(all_results, str(output))
         plot_speedup_heatmap(all_results, str(output))
         print(f"  Charts saved to {output}/")
 
-    results_file = output / "speculative_results.json"
     with open(results_file, "w") as f:
         json.dump(all_results, f, indent=2)
     print(f"\nResults saved to {results_file}")
