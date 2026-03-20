@@ -36,7 +36,7 @@ class SpecBenchmarker:
                         continue
                     chunk = json.loads(line[6:])
                     delta = chunk.get("choices", [{}])[0].get("delta", {})
-                    if delta.get("content"):
+                    if delta.get("content") or delta.get("reasoning"):
                         if ttft_ms == 0.0:
                             ttft_ms = (time.perf_counter() - start) * 1000
                         tokens += 1

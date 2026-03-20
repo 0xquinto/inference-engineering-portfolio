@@ -90,11 +90,13 @@ class StructuredBenchmarker:
                             continue
                         chunk = json.loads(line[6:])
                         delta = chunk.get("choices", [{}])[0].get("delta", {})
-                        if delta.get("content"):
+                        token_text = delta.get("content") or delta.get("reasoning")
+                        if token_text:
                             if ttft_ms == 0.0:
                                 ttft_ms = (time.perf_counter() - start) * 1000
                             tokens += 1
-                            content_parts.append(delta["content"])
+                            if delta.get("content"):
+                                content_parts.append(delta["content"])
 
             elapsed_ms = (time.perf_counter() - start) * 1000
 
