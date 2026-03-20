@@ -5,8 +5,8 @@ from .quantize import QuantizeResult, _dir_size_mb
 
 def mlx_lm_convert(model: str, output_dir: str, bits: int, group_size: int) -> None:
     from mlx_lm import convert
-    convert(model=model, quantize=True, q_bits=bits, q_group_size=group_size,
-            upload_repo=None, mlx_path=output_dir)
+    convert(hf_path=model, mlx_path=output_dir, quantize=True,
+            q_bits=bits, q_group_size=group_size)
 
 class MLXQuantizationRunner:
     def __init__(self, model_name: str, output_dir: str = "quantized_models"):

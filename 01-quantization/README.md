@@ -8,13 +8,21 @@ This project quantizes a base model into multiple formats (INT4, INT8, FP8), the
 
 ## Key Results
 
-**Local (M4 MacBook Pro, Qwen3.5-4B via Ollama)**
+**MLX Quantization (M4 MacBook Pro, Qwen3.5-4B)**
 
-| Format | Concurrency | TTFT (ms) | Throughput (tok/s) |
-|--------|-------------|----------:|-----------:|
-| BF16   | 1           | 199       | 26.7       |
-| BF16   | 5           | 17,557    | 12.6       |
-| BF16   | 10          | 38,069    | 7.2        |
+| Format | Bits/weight | Size | Compression | Quantization Time |
+|--------|------------|------|-------------|-------------------|
+| BF16   | 16         | ~8 GB | 1.0x       | -                 |
+| INT8   | 8.5        | 4.2 GB | 1.9x      | 4.5s              |
+| INT4   | 4.5        | 2.2 GB | 3.6x      | 429s (incl. download) |
+
+**Serving Benchmark (BF16 baseline via Ollama)**
+
+| Concurrency | TTFT (ms) | Throughput (tok/s) |
+|-------------|----------:|-----------:|
+| 1           | 199       | 26.7       |
+| 5           | 17,557    | 12.6       |
+| 10          | 38,069    | 7.2        |
 
 ## Architecture
 

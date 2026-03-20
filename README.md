@@ -1,17 +1,39 @@
 # Inference Engineering Portfolio
 
-Six projects covering the full inference optimization lifecycle — from model compression to token economics.
+Six projects covering the full inference optimization lifecycle — from model compression to token economics. Every project runs on both CUDA GPUs and Apple Silicon via hardware profiles. Same pipeline, same metrics, different hardware.
+
+## Why This Exists
+
+$1 trillion in hardware orders are flowing into inference infrastructure through 2027. A trained model sitting in storage generates zero revenue — inference is where intelligence becomes a business. This portfolio demonstrates the skills that make that infrastructure pay off.
 
 ## Projects
 
-| # | Project | What it proves | Key technique |
-|---|---------|---------------|---------------|
-| 01 | [Quantization Pipeline](./01-quantization/) | Compress models and measure quality-speed-memory tradeoffs | W4A16 INT4, FP8 via llmcompressor |
-| 02 | [Inference Stack Benchmarks](./02-inference-benchmarks/) | Rigorous evaluation of serving frameworks on production hardware | vLLM vs SGLang on H200 |
-| 03 | [Prefix Caching](./03-prefix-caching/) | KV cache optimization for real inference workloads | Prefix caching, cache-aware routing |
-| 04 | [Speculative Decoding](./04-speculative-decoding/) | Accelerate decode with draft-verify methods across QPS levels | EAGLE-3, P-EAGLE, n-gram, draft model |
-| 05 | [Structured Output](./05-structured-output/) | Constrained decoding for agentic tool-calling reliability | XGrammar vs Outlines vs unconstrained+retry |
-| 06 | [Cost Optimization](./06-cost-optimization/) | Token economics, LLM cascading, and self-hosted vs API breakeven | Cascade routing, cost-per-token modeling |
+| # | Project | What it proves | Key result |
+|---|---------|---------------|------------|
+| 01 | [Quantization](./01-quantization/) | Compress models without breaking them | 26.7 TPS baseline, INT4/FP8 via llmcompressor + MLX |
+| 02 | [Inference Benchmarks](./02-inference-benchmarks/) | Engine selection with data, not opinions | vLLM vs SGLang head-to-head on H200 |
+| 03 | [Prefix Caching](./03-prefix-caching/) | Make repeated work free | TTFT comparison across 4 caching scenarios |
+| 04 | [Speculative Decoding](./04-speculative-decoding/) | Solve the decode bottleneck | 6 methods (EAGLE-3, P-EAGLE, MTP, n-gram) across QPS levels |
+| 05 | [Structured Output](./05-structured-output/) | Guarantee agent reliability | 100% validity constrained vs 0% unconstrained, 6% TPS overhead |
+| 06 | [Cost Optimization](./06-cost-optimization/) | Know what each token costs | Edge cascade: 0.8B/4B at $0/M, blended $0.00/M tokens |
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│          Inference Optimization Pipeline          │
+│   quantize → benchmark → cache → speculate →     │
+│   constrain → cost-model                         │
+├─────────────────────────────────────────────────┤
+│             OpenAI-Compatible API                 │
+├──────────┬──────────┬────────────────────────────┤
+│  vLLM    │  Ollama  │  Any future backend        │
+│  (CUDA)  │  (Metal) │  (Groq, TPU, ...)          │
+└──────────┴──────────┴────────────────────────────┘
+       --profile gpu      --profile local
+```
+
+Hardware is a YAML field. The pipeline, metrics, and analysis are the same.
 
 ## Skill Progression
 
@@ -33,34 +55,43 @@ Every project supports `--profile gpu` and `--profile local`:
 | Profile | Hardware | Backend | Model | Use case |
 |---------|----------|---------|-------|----------|
 | `gpu` | A40/H200 (CUDA) | vLLM / SGLang | Qwen3.5-9B | Production benchmarks |
-| `local` | M4 MacBook (Metal) | vLLM (Metal) | Qwen3.5-4B | Development + edge inference |
-
-Same pipeline, same metrics, same charts. Hardware is a config field.
+| `local` | M4 MacBook (Metal) | Ollama | Qwen3.5-4B | Development + edge inference |
 
 ```bash
-# GPU (RunPod)
-python -m src.main --profile gpu
-
-# Local (MacBook)
-python -m src.main --profile local
+python -m src.main --profile gpu     # Production (CUDA)
+python -m src.main --profile local   # Apple Silicon (Metal)
+python -m src.main --config X.yaml   # Custom configuration
 ```
 
-The `--config` flag still works for custom configurations.
+## Quick Start
+
+```bash
+# Clone and run tests (no GPU needed)
+git clone https://github.com/0xquinto/inference-engineering-portfolio.git
+cd inference-engineering-portfolio
+pip install httpx pyyaml pandas matplotlib pytest pytest-asyncio
+python -m pytest 04-speculative-decoding/ -q  # 45 tests
+
+# Run local benchmarks (requires Ollama + model)
+ollama pull qwen3.5:4b
+cd 04-speculative-decoding
+python -m src.main --profile local --method baseline
+```
 
 ## GPU Access
 
-| Provider | GPU | Cost | Good for |
+| Provider | GPU | Cost | Projects |
 |----------|-----|------|----------|
-| RunPod | A40 (48GB) | ~$0.75/hr | Projects 01, 03, 04, 05, 06 |
-| RunPod | H200 (141GB) | ~$3.59/hr | Project 02 (MoE models), 06 (27B tier) |
+| RunPod | A40 (48GB) | ~$0.75/hr | 01, 03, 04, 05, 06 |
+| RunPod | H200 (141GB) | ~$3.59/hr | 02, 06 (27B tier) |
 
-## Prerequisites
+## Test Coverage
+
+216 tests across all 6 projects, all passing locally without a GPU.
 
 ```bash
-python --version  # 3.10+
-nvidia-smi        # CUDA toolkit on GPU instance
-# OR on Mac:
-system_profiler SPHardwareDataType | grep Chip  # Apple Silicon
+for proj in 01-quantization 02-inference-benchmarks 03-prefix-caching \
+            04-speculative-decoding 05-structured-output 06-cost-optimization; do
+    python -m pytest "$proj/" -q
+done
 ```
-
-Each project has its own `requirements.txt`, `scripts/setup_gpu.sh` for GPU, and `scripts/setup_local.sh` for Apple Silicon. All tests run locally without a GPU.
