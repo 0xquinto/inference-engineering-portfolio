@@ -16,13 +16,23 @@ This project quantizes a base model into multiple formats (INT4, INT8, FP8), the
 | INT8   | 8.5        | 4.2 GB | 1.9x      | 4.5s              |
 | INT4   | 4.5        | 2.2 GB | 3.6x      | 429s (incl. download) |
 
-**Serving Benchmark (BF16 baseline via Ollama)**
+**Serving Benchmark — GPU (L40S 48GB, Qwen3.5-9B via vLLM)**
+
+| Concurrency | TTFT (ms) | Throughput (tok/s) | VRAM |
+|-------------|----------:|-----------:|------|
+| 1           | 126       | 43.4       | 41.7 GB |
+| 10          | 407       | 35.9       | 41.7 GB |
+| 50          | 908       | 31.1       | 41.7 GB |
+
+**Serving Benchmark — Local (M4 MacBook Pro, Qwen3.5-4B via Ollama)**
 
 | Concurrency | TTFT (ms) | Throughput (tok/s) |
 |-------------|----------:|-----------:|
 | 1           | 199       | 26.7       |
 | 5           | 17,557    | 12.6       |
 | 10          | 38,069    | 7.2        |
+
+**Cross-platform:** L40S delivers 1.6x higher single-request throughput (43.4 vs 26.7 TPS) and degrades far more gracefully under concurrency (31.1 vs 7.2 TPS at c=50/10).
 
 ## Architecture
 

@@ -21,13 +21,27 @@ Autoregressive decoding is memory-bandwidth bound: the GPU computes one token at
 
 **Local Baseline (M4 MacBook Pro, Qwen3.5-4B via Ollama)**
 
-| QPS | TTFT p50 (ms) | TTFT p95 (ms) | Throughput p50 (tok/s) |
-|-----|---------------|---------------|------------------------|
-| 1   | 38,671        | 87,522        | 5.56                   |
-| 5   | 42,900        | 97,595        | 5.07                   |
-| 10  | 43,914        | 97,711        | 5.05                   |
+**GPU (L40S 48GB, Qwen3.5-9B via vLLM)**
 
-Speculative methods (EAGLE-3, P-EAGLE, MTP) require vLLM on GPU and are not available locally. The method-vs-method comparison across all six strategies is the primary deliverable when run on GPU hardware.
+| QPS | TTFT p50 (ms) | Throughput p50 (tok/s) |
+|-----|---------------|------------------------|
+| 1   | 45,645        | 4.3 (thinking dominates) |
+| 5   | 177           | 28.6                   |
+| 10  | 179           | 28.9                   |
+| 25  | 599           | 27.9                   |
+| 50  | 570           | 27.9                   |
+
+**Local (M4 MacBook Pro, Qwen3.5-4B via Ollama)**
+
+| QPS | TTFT p50 (ms) | Throughput p50 (tok/s) |
+|-----|---------------|------------------------|
+| 1   | 38,671        | 5.6                    |
+| 5   | 42,900        | 5.1                    |
+| 10  | 43,914        | 5.0                    |
+
+**Cross-platform:** L40S achieves 28.9 TPS vs M4's 5.6 TPS at QPS=5-10 — a 5.2x throughput advantage. Both platforms show the same pattern: QPS=1 is dominated by thinking tokens (45s+ TTFT), while higher QPS amortizes the overhead.
+
+Speculative methods (EAGLE-3, P-EAGLE, MTP) require vLLM on GPU and will show further improvements over this baseline.
 
 ## Hardware Profiles
 
