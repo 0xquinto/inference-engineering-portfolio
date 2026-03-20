@@ -4,6 +4,7 @@ models:
     params: 0.8B
     description: "Fast, cheap, handles simple queries"
     port: 8010
+    model_id: "Qwen/Qwen3.5-0.8B"
     gpu_cost_per_hour: 0.75  # A40 price
     vram_mb: 1200
   medium:
@@ -11,6 +12,7 @@ models:
     params: 9B
     description: "Balanced quality/cost for moderate tasks"
     port: 8011
+    model_id: "Qwen/Qwen3.5-9B"
     gpu_cost_per_hour: 0.75
     vram_mb: 14200
   large:
@@ -18,6 +20,7 @@ models:
     params: 27B
     description: "Highest quality for complex tasks"
     port: 8012
+    model_id: "Qwen/Qwen3.5-27B"
     gpu_cost_per_hour: 3.59  # H200 price
     vram_mb: 28000
 

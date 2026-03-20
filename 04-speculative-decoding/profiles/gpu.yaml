@@ -36,6 +36,7 @@ methods:
 
 benchmark:
   port: 8010
+  model_id: "Qwen/Qwen3.5-9B"
   qps_levels: [1, 5, 10, 25, 50]
   warmup_requests: 5
   requests_per_prompt: 10

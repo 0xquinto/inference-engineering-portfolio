@@ -31,6 +31,7 @@ scenarios:
 engines:
   vllm:
     port: 8010
+    model_id: "Qwen/Qwen3.5-9B"
     prefix_caching_flag: "--enable-prefix-caching"
     extra_args:
       - "--max-model-len"

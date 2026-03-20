@@ -34,6 +34,7 @@ evaluation:
 benchmark:
   engine: vllm
   port: 8010
+  model_id: "Qwen/Qwen3.5-9B"
   concurrency_levels: [1, 10, 50]
   warmup_requests: 3
   requests_per_prompt: 5
