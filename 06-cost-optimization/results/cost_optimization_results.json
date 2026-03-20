@@ -1,0 +1,182 @@
+{
+  "benchmark": {
+    "aggregate": {
+      "count": 5,
+      "ttft_p50": 14140.117374947295,
+      "ttft_p95": 38025.21104103653,
+      "throughput_p50": 11.586400613408815,
+      "per_model": {
+        "local_small": {
+          "count": 2,
+          "ttft_p50": 14140.117374947295,
+          "throughput_p50": 31.456467432842874
+        },
+        "local_medium": {
+          "count": 2,
+          "ttft_p50": 22021.95024996763,
+          "throughput_p50": 19.378546173281233
+        },
+        "local_large": {
+          "count": 1,
+          "ttft_p50": 38025.21104103653,
+          "throughput_p50": 8.407462901144468
+        }
+      }
+    },
+    "raw": [
+      {
+        "model_name": "local_small",
+        "complexity": "simple",
+        "prompt": "What is the capital of France?",
+        "ttft_ms": 14140.117374947295,
+        "total_time_ms": 19474.68216699781,
+        "tokens_generated": 185,
+        "tokens_per_sec": 9.499513184020264,
+        "quality_score": 0.0,
+        "escalated": false
+      },
+      {
+        "model_name": "local_small",
+        "complexity": "simple",
+        "prompt": "Define photosynthesis.",
+        "ttft_ms": 203.8590000011027,
+        "total_time_ms": 14019.374583032914,
+        "tokens_generated": 441,
+        "tokens_per_sec": 31.456467432842874,
+        "quality_score": 0.0,
+        "escalated": false
+      },
+      {
+        "model_name": "local_medium",
+        "complexity": "moderate",
+        "prompt": "Explain the difference between TCP and UDP.",
+        "ttft_ms": 22021.95024996763,
+        "total_time_ms": 37889.24745895201,
+        "tokens_generated": 439,
+        "tokens_per_sec": 11.586400613408815,
+        "quality_score": 0.0,
+        "escalated": false
+      },
+      {
+        "model_name": "local_medium",
+        "complexity": "moderate",
+        "prompt": "How does a transformer model work?",
+        "ttft_ms": 271.88816701527685,
+        "total_time_ms": 21879.86633303808,
+        "tokens_generated": 424,
+        "tokens_per_sec": 19.378546173281233,
+        "quality_score": 0.0,
+        "escalated": false
+      },
+      {
+        "model_name": "local_large",
+        "complexity": "complex",
+        "prompt": "Design a distributed cache invalidation strategy for a multi-region deployment.",
+        "ttft_ms": 38025.21104103653,
+        "total_time_ms": 53880.701625021175,
+        "tokens_generated": 453,
+        "tokens_per_sec": 8.407462901144468,
+        "quality_score": 0.0,
+        "escalated": false
+      }
+    ]
+  },
+  "cost_analysis": {
+    "cost_table": [
+      {
+        "model": "local_small",
+        "tps": 31.456467432842874,
+        "gpu_cost_per_hour": 0.0,
+        "cost_per_million": 0.0,
+        "monthly_cost": 0.0,
+        "monthly_tokens": 40767581.79296436
+      },
+      {
+        "model": "local_medium",
+        "tps": 19.378546173281233,
+        "gpu_cost_per_hour": 0.0,
+        "cost_per_million": 0.0,
+        "monthly_cost": 0.0,
+        "monthly_tokens": 25114595.840572476
+      },
+      {
+        "model": "local_large",
+        "tps": 8.407462901144468,
+        "gpu_cost_per_hour": 0.0,
+        "cost_per_million": 0.0,
+        "monthly_cost": 0.0,
+        "monthly_tokens": 10896071.91988323
+      }
+    ],
+    "api_comparison": {
+      "local_small": {
+        "openai_gpt4o": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 10.0,
+          "savings_pct": 100.0
+        },
+        "openai_gpt4o_mini": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 0.6,
+          "savings_pct": 100.0
+        },
+        "anthropic_sonnet": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 15.0,
+          "savings_pct": 100.0
+        }
+      },
+      "local_medium": {
+        "openai_gpt4o": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 10.0,
+          "savings_pct": 100.0
+        },
+        "openai_gpt4o_mini": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 0.6,
+          "savings_pct": 100.0
+        },
+        "anthropic_sonnet": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 15.0,
+          "savings_pct": 100.0
+        }
+      },
+      "local_large": {
+        "openai_gpt4o": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 10.0,
+          "savings_pct": 100.0
+        },
+        "openai_gpt4o_mini": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 0.6,
+          "savings_pct": 100.0
+        },
+        "anthropic_sonnet": {
+          "self_hosted_cost_per_m": 0.0,
+          "api_cost_per_m": 15.0,
+          "savings_pct": 100.0
+        }
+      }
+    },
+    "cascade_cost": {
+      "distribution": {
+        "local_small": {
+          "count": 2,
+          "percentage": 40.0
+        },
+        "local_medium": {
+          "count": 2,
+          "percentage": 40.0
+        },
+        "local_large": {
+          "count": 1,
+          "percentage": 20.0
+        }
+      },
+      "blended_cost_per_million": 0.0
+    }
+  }
+}

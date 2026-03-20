@@ -15,14 +15,14 @@ models:
     model_id: "qwen3.5:4b"
     gpu_cost_per_hour: 0.0
     vram_mb: 8000
-  cloud:
-    name: Qwen/Qwen3.5-9B
-    params: 9B
-    description: "Cloud GPU for complex queries"
-    port: 8012
-    model_id: "default"
-    gpu_cost_per_hour: 0.75
-    vram_mb: 14200
+  local_large:
+    name: Qwen/Qwen3.5-4B
+    params: 4B
+    description: "On-device large model for complex queries (M4 MacBook)"
+    port: 11434
+    model_id: "qwen3.5:4b"
+    gpu_cost_per_hour: 0.0
+    vram_mb: 8000
 
 cascade:
   complexity_keywords:
@@ -47,14 +47,14 @@ cascade:
   routing:
     simple: local_small
     moderate: local_medium
-    complex: cloud
+    complex: local_large
   quality_threshold: 0.8
 
 benchmark:
   concurrency: 5
   warmup_requests: 2
   requests_per_prompt: 3
-  max_tokens: 128
+  max_tokens: 512
   temperature: 0.0
   prompts:
     simple:

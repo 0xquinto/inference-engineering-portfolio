@@ -1,0 +1,20 @@
+{
+  "shared_system_prompt": {
+    "caching_off": {
+      "count": 10,
+      "caching": false,
+      "ttft_p50": 32852.13245800696,
+      "ttft_p95": 34183.4380410146,
+      "ttft_mean": 25349.285129009513,
+      "throughput_p50": 6.138156495358428
+    },
+    "caching_on": {
+      "count": 10,
+      "caching": true,
+      "ttft_p50": 32762.530707987025,
+      "ttft_p95": 34099.68479198869,
+      "ttft_mean": 24893.286941584665,
+      "throughput_p50": 6.110085105190251
+    }
+  }
+}

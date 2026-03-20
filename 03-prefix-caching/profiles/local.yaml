@@ -7,7 +7,7 @@ scenarios:
   shared_system_prompt:
     description: "50 requests with identical system prompt"
     system_prompt_tokens: 500
-    num_requests: 50
+    num_requests: 10
     user_message_tokens: 30
   multi_turn:
     description: "5-turn conversations"
@@ -27,5 +27,5 @@ engines:
 benchmark:
   concurrency: 5
   warmup_requests: 2
-  max_tokens: 64
+  max_tokens: 256
   temperature: 0.0
