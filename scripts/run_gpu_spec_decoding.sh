@@ -26,7 +26,7 @@ start_vllm() {
         --model "$model" --port "$port" \
         --host 0.0.0.0 \
         --max-model-len 8192 \
-        --disable-log-requests \
+        --no-enable-log-requests \
         "$@" > /workspace/vllm_server.log 2>&1 &
     VLLM_PID=$!
     for i in $(seq 1 120); do
