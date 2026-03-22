@@ -53,6 +53,11 @@ class TestStructuredBenchmarker:
         b = StructuredBenchmarker(port=8010, max_tokens=512)
         assert b.base_url == "http://localhost:8010"
         assert b.max_tokens == 512
+        assert b.disable_thinking is False
+
+    def test_init_disable_thinking(self):
+        b = StructuredBenchmarker(port=8010, disable_thinking=True)
+        assert b.disable_thinking is True
 
     def test_aggregate_results(self):
         results = [

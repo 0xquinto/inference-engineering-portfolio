@@ -52,6 +52,7 @@ class StructuredConfig:
     temperature: float = 0.0
     max_retries: int = 3
     schema_format: str = "guided_json"  # "guided_json" (vLLM) or "response_format" (OpenAI/Ollama)
+    disable_thinking: bool = False
 
 
 def load_config(path: Path) -> StructuredConfig:
@@ -83,4 +84,5 @@ def load_config(path: Path) -> StructuredConfig:
         temperature=bench.get("temperature", 0.0),
         max_retries=bench.get("max_retries", 3),
         schema_format=bench.get("schema_format", "guided_json"),
+        disable_thinking=bench.get("disable_thinking", False),
     )

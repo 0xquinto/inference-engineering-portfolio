@@ -46,6 +46,7 @@ class StructuredBenchmarker:
         temperature: float = 0.0, max_retries: int = 3,
         model_name: str = "default",
         schema_format: str = "guided_json",
+        disable_thinking: bool = False,
     ):
         self.base_url = f"http://localhost:{port}"
         self.max_tokens = max_tokens
@@ -53,6 +54,7 @@ class StructuredBenchmarker:
         self.max_retries = max_retries
         self.model_name = model_name
         self.schema_format = schema_format
+        self.disable_thinking = disable_thinking
 
     async def send_request(
         self, prompt: str, schema: dict | None, backend_name: str,
@@ -75,6 +77,8 @@ class StructuredBenchmarker:
                 "temperature": self.temperature,
                 "stream": True,
             }
+            if self.disable_thinking:
+                payload["chat_template_kwargs"] = {"enable_thinking": False}
             if is_constrained and schema is not None:
                 if self.schema_format == "response_format":
                     payload["response_format"] = {
@@ -110,6 +114,11 @@ class StructuredBenchmarker:
                             tokens += 1
                             if delta.get("content"):
                                 content_parts.append(delta["content"])
+                            elif self.disable_thinking and delta.get("reasoning"):
+                                # Workaround: vLLM streaming parser may route
+                                # content to reasoning field when thinking is
+                                # disabled (vLLM PR #37414)
+                                content_parts.append(delta["reasoning"])
 
             elapsed_ms = (time.perf_counter() - start) * 1000
 

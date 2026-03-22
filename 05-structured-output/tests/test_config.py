@@ -73,3 +73,11 @@ class TestLoadConfig:
     def test_max_retries(self):
         cfg = load_config(Path(__file__).parent.parent / "configs" / "structured.yaml")
         assert cfg.max_retries == 3
+
+    def test_disable_thinking_default(self):
+        cfg = load_config(Path(__file__).parent.parent / "configs" / "structured.yaml")
+        assert cfg.disable_thinking is False
+
+    def test_disable_thinking_gpu_profile(self):
+        cfg = load_config(Path(__file__).parent.parent / "profiles" / "gpu.yaml")
+        assert cfg.disable_thinking is True

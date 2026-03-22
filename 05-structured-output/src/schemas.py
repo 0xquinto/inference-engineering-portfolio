@@ -105,9 +105,17 @@ def strip_think_tags(text: str) -> str:
     return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
 
 
+def strip_markdown_fences(text: str) -> str:
+    """Strip markdown code fences (```json ... ```) from model output."""
+    if not text:
+        return text
+    return re.sub(r"```(?:json)?\s*\n?(.*?)\n?\s*```", r"\1", text, flags=re.DOTALL).strip()
+
+
 def validate_output(level_name: str, output: str) -> bool:
     """Validate that output conforms to the schema for the given level."""
     output = strip_think_tags(output)
+    output = strip_markdown_fences(output)
     try:
         data = json.loads(output)
     except (json.JSONDecodeError, TypeError):

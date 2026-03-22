@@ -35,3 +35,4 @@ benchmark:
   max_tokens: 512
   temperature: 0.0
   max_retries: 3
+  disable_thinking: true  # Suppress <think> tags that corrupt guided JSON output

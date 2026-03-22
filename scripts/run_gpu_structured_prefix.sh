@@ -71,7 +71,8 @@ echo ""
 cd $REPO_DIR/05-structured-output
 
 # Single server — structured output backends are selected per-request via guided_json
-start_vllm "$MODEL" 8010
+# Disable thinking mode server-side to prevent <think> tags corrupting guided JSON
+start_vllm "$MODEL" 8010 --default-chat-template-kwargs '{"enable_thinking": false}'
 python3 -m src.main --profile gpu --step benchmark
 python3 -m src.main --profile gpu --step visualize
 stop_vllm

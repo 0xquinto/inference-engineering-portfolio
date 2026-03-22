@@ -70,6 +70,7 @@ async def async_main(args, cfg):
             temperature=cfg.temperature, max_retries=cfg.max_retries,
             model_name=cfg.model_id,
             schema_format=cfg.schema_format,
+            disable_thinking=cfg.disable_thinking,
         )
 
         for backend in backends:
