@@ -1,34 +1,26 @@
 {
   "hardware": "NVIDIA L40S 48GB",
   "model": "Qwen/Qwen3.5-9B",
-  "engine": "vLLM 0.17.1",
+  "engine": "vLLM 0.18.0",
   "baseline": {
-    "1": {
-      "ttft_p50": 45644.7,
-      "throughput_p50": 4.3,
-      "count": 50
-    },
-    "5": {
-      "ttft_p50": 177.3,
-      "throughput_p50": 28.6,
-      "count": 50
-    },
-    "10": {
-      "ttft_p50": 179.1,
-      "throughput_p50": 28.9,
-      "count": 50
-    },
-    "25": {
-      "ttft_p50": 598.7,
-      "ttft_p95": 681.1,
-      "throughput_p50": 27.9,
-      "count": 50
-    },
-    "50": {
-      "ttft_p50": 570.0,
-      "ttft_p95": 692.3,
-      "throughput_p50": 27.9,
-      "count": 50
-    }
+    "1": {"ttft_p50": 40378.5, "ttft_p95": 62432.7, "throughput_p50": 4.9, "count": 50},
+    "5": {"ttft_p50": 136.1, "ttft_p95": 159.5, "throughput_p50": 30.8, "count": 50},
+    "10": {"ttft_p50": 135.4, "ttft_p95": 186.2, "throughput_p50": 29.5, "count": 50},
+    "25": {"ttft_p50": 139.9, "ttft_p95": 186.4, "throughput_p50": 28.7, "count": 50},
+    "50": {"ttft_p50": 165.7, "ttft_p95": 208.1, "throughput_p50": 29.1, "count": 50}
+  },
+  "ngram": {
+    "1": {"ttft_p50": 118.1, "ttft_p95": 727.8, "throughput_p50": 26.1, "count": 50},
+    "5": {"ttft_p50": 127.0, "ttft_p95": 177.8, "throughput_p50": 18.9, "count": 50},
+    "10": {"ttft_p50": 132.8, "ttft_p95": 162.6, "throughput_p50": 17.4, "count": 50},
+    "25": {"ttft_p50": 106.5, "ttft_p95": 364.4, "throughput_p50": 16.2, "count": 50},
+    "50": {"ttft_p50": 118.9, "ttft_p95": 165.5, "throughput_p50": 16.1, "count": 50}
+  },
+  "mtp": {
+    "1": {"ttft_p50": 138.7, "ttft_p95": 928.7, "throughput_p50": 31.9, "count": 50},
+    "5": {"ttft_p50": 142.5, "ttft_p95": 190.9, "throughput_p50": 25.2, "count": 50},
+    "10": {"ttft_p50": 138.2, "ttft_p95": 233.0, "throughput_p50": 23.3, "count": 50},
+    "25": {"ttft_p50": 152.6, "ttft_p95": 385.0, "throughput_p50": 22.1, "count": 50},
+    "50": {"ttft_p50": 164.7, "ttft_p95": 421.7, "throughput_p50": 21.5, "count": 50}
   }
 }

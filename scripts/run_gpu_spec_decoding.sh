@@ -9,10 +9,10 @@ set -e
 REPO_DIR="/workspace/inference-engineering-portfolio"
 cd $REPO_DIR
 
-pip install -q httpx pyyaml pandas matplotlib tqdm
+pip install --break-system-packages -q httpx pyyaml pandas matplotlib tqdm
 
 # Upgrade transformers for Qwen3.5 support (model_type: qwen3_5 needs transformers >= 4.57)
-pip install -q --upgrade transformers
+pip install --break-system-packages -q --upgrade transformers
 
 # Helper: start vLLM and wait
 # IMPORTANT: Uses "$@" directly (not assigned to a variable) to preserve
