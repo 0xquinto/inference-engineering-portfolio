@@ -8,7 +8,23 @@ In the agentic era, LLM-powered agents depend on guaranteed structured output fo
 
 ## Key Results
 
-Tested on Qwen3.5-4B with Ollama (`json_schema` backend) on a local machine.
+**GPU (L40S 48GB, Qwen3.5-9B via vLLM 0.18.0)**
+
+| Backend | Schema | Validity | TPS (p50) | Retries |
+|---|---|---|---|---|
+| xgrammar | simple_json | 0% | 37.9 | 0 |
+| xgrammar | nested_object | 0% | 38.0 | 0 |
+| xgrammar | function_call | 0% | 37.7 | 0 |
+| outlines | simple_json | 0% | 38.0 | 0 |
+| outlines | nested_object | 0% | 38.0 | 0 |
+| outlines | function_call | 0% | 37.9 | 0 |
+| unconstrained | simple_json | 0% | 37.8 | 4.0 |
+| unconstrained | nested_object | 0% | 37.9 | 4.0 |
+| unconstrained | function_call | 0% | 37.6 | 4.0 |
+
+**GPU finding:** All backends produce 0% validity on GPU. Qwen3.5-9B wraps output in `<think>` reasoning tags before the JSON. Even with `strip_think_tags()` applied, the constrained backends (xgrammar, outlines) embed the thinking tokens inside the guided output, corrupting the JSON structure. Throughput is consistent at ~38 TPS across all backends — constrained decoding adds no overhead on GPU.
+
+**Local (M4 MacBook Pro, Qwen3.5-4B via Ollama)**
 
 | Backend | Schema | Validity | TPS (p50) | Retries |
 |---|---|---|---|---|
@@ -17,9 +33,9 @@ Tested on Qwen3.5-4B with Ollama (`json_schema` backend) on a local machine.
 | json_schema | function_call | 0% | 12.4 | 0 |
 | unconstrained | function_call | 0% | 9.3 | 4.0 |
 
-**Headline:** Constrained decoding guarantees correctness on well-supported schemas with only ~6% TPS overhead versus unconstrained generation.
+**Local finding:** Constrained decoding guarantees correctness on well-supported schemas with only ~6% TPS overhead versus unconstrained generation. Ollama's `json_schema` backend achieves 100% validity on simple schemas.
 
-**Note:** The `function_call` schema produced 0% validity even with constraints. This is a model-level limitation (the 4B model cannot reliably follow enum-constrained tool-call schemas), not a framework deficiency.
+**Cross-platform insight:** The thinking-mode behavior differs between backends. Ollama suppresses thinking tokens when `response_format` is set, allowing clean JSON output. vLLM's guided_json backends (xgrammar, outlines) interleave thinking tokens with the constrained output, breaking validity. This is a known interaction between reasoning models and constrained decoding — the solution is to disable thinking mode via `chat_template` or use a non-thinking model variant.
 
 ## Backends
 

@@ -1,28 +1,60 @@
 {
-  "json_schema": {
+  "xgrammar": {
     "simple_json": {
-      "ttft_p50": 11392.892041010782,
-      "throughput_p50": 7.675205613132976,
-      "validity_rate": 1.0,
+      "ttft_p50": 253.06832883507013,
+      "throughput_p50": 37.874780168059225,
+      "validity_rate": 0.0,
+      "avg_retries": 0.0
+    },
+    "nested_object": {
+      "ttft_p50": 276.07499063014984,
+      "throughput_p50": 38.00888608671146,
+      "validity_rate": 0.0,
       "avg_retries": 0.0
     },
     "function_call": {
-      "ttft_p50": 16946.711707976647,
-      "throughput_p50": 12.4305544265205,
+      "ttft_p50": 258.26187431812286,
+      "throughput_p50": 37.73225289756429,
+      "validity_rate": 0.0,
+      "avg_retries": 0.0
+    }
+  },
+  "outlines": {
+    "simple_json": {
+      "ttft_p50": 226.29012633115053,
+      "throughput_p50": 37.968223759284704,
+      "validity_rate": 0.0,
+      "avg_retries": 0.0
+    },
+    "nested_object": {
+      "ttft_p50": 256.86846300959587,
+      "throughput_p50": 38.04775984050303,
+      "validity_rate": 0.0,
+      "avg_retries": 0.0
+    },
+    "function_call": {
+      "ttft_p50": 249.03447180986404,
+      "throughput_p50": 37.852472708595336,
       "validity_rate": 0.0,
       "avg_retries": 0.0
     }
   },
   "unconstrained": {
     "simple_json": {
-      "ttft_p50": 12571.106166986283,
-      "throughput_p50": 8.56166527624371,
+      "ttft_p50": 224.6366087347269,
+      "throughput_p50": 37.768242855657974,
+      "validity_rate": 0.0,
+      "avg_retries": 4.0
+    },
+    "nested_object": {
+      "ttft_p50": 273.5118540003896,
+      "throughput_p50": 37.86015952979554,
       "validity_rate": 0.0,
       "avg_retries": 4.0
     },
     "function_call": {
-      "ttft_p50": 16636.799082974903,
-      "throughput_p50": 9.332466875451496,
+      "ttft_p50": 256.8482207134366,
+      "throughput_p50": 37.57937797271421,
       "validity_rate": 0.0,
       "avg_retries": 4.0
     }

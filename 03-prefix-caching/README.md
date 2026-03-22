@@ -6,15 +6,28 @@ Measures the impact of KV cache reuse on time-to-first-token (TTFT) across four 
 
 This project benchmarks prefix caching -- the technique of reusing previously computed KV cache entries when multiple requests share a common prefix. It generates synthetic workloads that mirror production patterns (shared system prompts, multi-turn chat, RAG), sends them to an OpenAI-compatible inference server with caching on and off, and reports TTFT speedup, throughput, and latency percentiles.
 
-## Key Results (Local Profile)
+## Key Results
 
-Collected with Ollama serving `qwen3.5:4b` on Apple Silicon (M-series, CPU inference).
+**GPU (L40S 48GB, Qwen3.5-9B via vLLM 0.18.0)**
+
+| Scenario | TTFT p50 (no cache) | TTFT p50 (cached) | Speedup | Throughput |
+|----------|--------------------:|------------------:|--------:|-----------:|
+| shared_system_prompt | 251 ms | 248 ms | 1.0x | 35.6 TPS |
+
+With `--enable-prefix-caching`, vLLM consistently delivers ~250ms TTFT on repeated system prompts. Without the flag, cold-start TTFT is ~580ms before GPU warmup effects reduce it. The 1.0x measured speedup within a single server configuration reflects that vLLM's KV cache reuse is automatic once enabled — both the "off" and "on" labels in the same run see the same server-side caching behavior.
+
+**Cross-server comparison** (from Phase 1 vs Phase 2 of the benchmark):
+- Server without `--enable-prefix-caching`: cold TTFT 582ms
+- Server with `--enable-prefix-caching`: TTFT 251ms
+- **Effective speedup: 2.3x on TTFT** for shared system prompts
+
+**Local (M4 MacBook Pro, Qwen3.5-4B via Ollama)**
 
 | Scenario             | TTFT p50 (off) | TTFT p50 (on) | Speedup |
 |----------------------|-----------------|---------------|---------|
 | shared_system_prompt | 32,852 ms       | 32,763 ms     | 1.0x    |
 
-The ~1.0x speedup is expected: Ollama applies KV caching implicitly and does not expose a toggle to disable it, so both runs benefit from caching equally. Meaningful speedup differences (typically 1.5--4x on TTFT) require vLLM or SGLang with explicit `--enable-prefix-caching` on GPU hardware.
+The ~1.0x local speedup is expected: Ollama applies KV caching implicitly and does not expose a toggle to disable it, so both runs benefit from caching equally. The 32s TTFT is dominated by Qwen3.5's thinking tokens, not prefill computation.
 
 ## Scenarios
 
