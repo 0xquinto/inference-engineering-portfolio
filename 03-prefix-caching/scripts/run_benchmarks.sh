@@ -9,52 +9,65 @@ PORT=8010
 
 echo "=== Running prefix caching benchmarks with $ENGINE ==="
 
-# Run WITHOUT prefix caching
-echo "Starting $ENGINE WITHOUT prefix caching..."
-if [ "$ENGINE" = "vllm" ]; then
-    vllm serve "$MODEL" --port "$PORT" --max-model-len 8192 &
-elif [ "$ENGINE" = "sglang" ]; then
-    python -m sglang.launch_server --model-path "$MODEL" --port "$PORT" --context-length 8192 --disable-radix-cache &
-fi
-SERVER_PID=$!
-
-echo "Waiting for server..."
-sleep 30
-for i in $(seq 1 60); do
-    if curl -s "http://localhost:$PORT/health" > /dev/null 2>&1; then
-        echo "Server ready."
-        break
+start_server() {
+    local extra_args="$1"
+    echo "  Starting $ENGINE: $MODEL on port $PORT $extra_args"
+    if [ "$ENGINE" = "vllm" ]; then
+        python3 -m vllm.entrypoints.openai.api_server \
+            --model "$MODEL" --port "$PORT" \
+            --host 0.0.0.0 \
+            --max-model-len 8192 \
+            --no-enable-log-requests \
+            $extra_args > /workspace/vllm_server.log 2>&1 &
+    elif [ "$ENGINE" = "sglang" ]; then
+        python3 -m sglang.launch_server \
+            --model-path "$MODEL" --port "$PORT" \
+            --context-length 8192 \
+            $extra_args > /workspace/sglang_server.log 2>&1 &
     fi
-    sleep 5
-done
+    SERVER_PID=$!
 
-python -m src.main --engine "$ENGINE" 2>&1 | tee results/run_no_cache.log
+    for i in $(seq 1 120); do
+        if curl -s "http://localhost:$PORT/health" > /dev/null 2>&1; then
+            echo "  Server ready (PID=$SERVER_PID)."
+            return 0
+        fi
+        sleep 5
+    done
+    echo "  ERROR: Server failed to start!"
+    return 1
+}
 
-kill $SERVER_PID 2>/dev/null || true
-wait $SERVER_PID 2>/dev/null || true
-sleep 5
+stop_server() {
+    if [ -n "$SERVER_PID" ]; then
+        echo "  Stopping server..."
+        kill $SERVER_PID 2>/dev/null || true
+        wait $SERVER_PID 2>/dev/null || true
+        sleep 3
+    fi
+}
+
+# Run WITHOUT prefix caching
+echo ""
+echo "=== Phase 1: NO prefix caching ==="
+if [ "$ENGINE" = "sglang" ]; then
+    start_server "--disable-radix-cache"
+else
+    start_server ""
+fi
+python3 -m src.main --profile gpu --engine "$ENGINE" 2>&1 | tee results/run_no_cache.log
+stop_server
 
 # Run WITH prefix caching
-echo "Starting $ENGINE WITH prefix caching..."
-if [ "$ENGINE" = "vllm" ]; then
-    vllm serve "$MODEL" --port "$PORT" --max-model-len 8192 --enable-prefix-caching &
-elif [ "$ENGINE" = "sglang" ]; then
-    python -m sglang.launch_server --model-path "$MODEL" --port "$PORT" --context-length 8192 &
+echo ""
+echo "=== Phase 2: WITH prefix caching ==="
+if [ "$ENGINE" = "sglang" ]; then
+    start_server ""
+else
+    start_server "--enable-prefix-caching"
 fi
-SERVER_PID=$!
+python3 -m src.main --profile gpu --engine "$ENGINE" 2>&1 | tee results/run_with_cache.log
+stop_server
 
-echo "Waiting for server..."
-sleep 30
-for i in $(seq 1 60); do
-    if curl -s "http://localhost:$PORT/health" > /dev/null 2>&1; then
-        echo "Server ready."
-        break
-    fi
-    sleep 5
-done
-
-python -m src.main --engine "$ENGINE" 2>&1 | tee results/run_with_cache.log
-
-kill $SERVER_PID 2>/dev/null || true
-
+echo ""
 echo "=== Benchmarks complete ==="
