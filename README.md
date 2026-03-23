@@ -16,7 +16,7 @@ $1 trillion in hardware orders are flowing into inference infrastructure through
 | 04 | [Speculative Decoding](./04-speculative-decoding/) | Solve the decode bottleneck | N-gram +14% speedup, MTP +6% on L40S |
 | 05 | [Structured Output](./05-structured-output/) | Guarantee agent reliability | 100% validity all backends, ~34 TPS on GPU |
 | 06 | [Cost Optimization](./06-cost-optimization/) | Know what each token costs | Edge cascade: 0.8B/4B at $0/M tokens |
-| 07 | [SLO Scheduling](./07-slo-scheduling/) | Guarantee latency under load | Goodput: FCFS vs SLO-Aware under mixed workloads |
+| 07 | [SLO Scheduling](./07-slo-scheduling/) | Guarantee latency under load | 100% goodput SLO-Aware vs 70% FCFS at QPS=20 |
 
 ## Architecture
 
