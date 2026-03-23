@@ -1,6 +1,6 @@
 # Inference Engineering Portfolio
 
-Six projects covering the full inference optimization lifecycle — from model compression to token economics. Every project runs on both CUDA GPUs and Apple Silicon via hardware profiles. Same pipeline, same metrics, different hardware.
+Seven projects covering the full inference optimization lifecycle — from model compression to SLO-aware serving. Every project runs on both CUDA GPUs and Apple Silicon via hardware profiles. Same pipeline, same metrics, different hardware.
 
 ## Why This Exists
 
@@ -16,6 +16,7 @@ $1 trillion in hardware orders are flowing into inference infrastructure through
 | 04 | [Speculative Decoding](./04-speculative-decoding/) | Solve the decode bottleneck | N-gram +14% speedup, MTP +6% on L40S |
 | 05 | [Structured Output](./05-structured-output/) | Guarantee agent reliability | 100% validity all backends, ~34 TPS on GPU |
 | 06 | [Cost Optimization](./06-cost-optimization/) | Know what each token costs | Edge cascade: 0.8B/4B at $0/M tokens |
+| 07 | [SLO Scheduling](./07-slo-scheduling/) | Guarantee latency under load | Goodput: FCFS vs SLO-Aware under mixed workloads |
 
 ## Architecture
 
@@ -45,7 +46,7 @@ Agentic Layer
   05 guarantee structured output for tool calling
 
 Systems Layer
-  06 model the economics and optimize cost per token
+  06 model the economics and optimize cost per token → 07 guarantee latency SLOs under load
 ```
 
 ## Hardware Profiles
@@ -84,16 +85,17 @@ All GPU benchmarks ran on RunPod with the `runpod-torch-v280` template (CUDA 12.
 
 | Provider | GPU | Cost | Projects |
 |----------|-----|------|----------|
-| RunPod | L40S (48GB) | ~$0.88/hr | 01, 03, 04, 05 |
+| RunPod | L40S (48GB) | ~$0.88/hr | 01, 03, 04, 05, 07 |
 | RunPod | H200 (141GB) | ~$3.59/hr | 02, 06 (27B tier) |
 
 ## Test Coverage
 
-222 tests across all 6 projects, all passing locally without a GPU.
+271 tests across all 7 projects, all passing locally without a GPU.
 
 ```bash
 for proj in 01-quantization 02-inference-benchmarks 03-prefix-caching \
-            04-speculative-decoding 05-structured-output 06-cost-optimization; do
+            04-speculative-decoding 05-structured-output 06-cost-optimization \
+            07-slo-scheduling; do
     python -m pytest "$proj/" -q
 done
 ```
