@@ -28,12 +28,12 @@ In the agentic era, LLM-powered agents depend on guaranteed structured output fo
 
 | Backend | Schema | Validity | TPS (p50) | Retries |
 |---|---|---|---|---|
-| json_schema | simple_json | **100%** | 22.0 | 0 |
-| unconstrained | simple_json | 0% | 23.5 | 4.0 |
-| json_schema | function_call | 0% | 12.4 | 0 |
-| unconstrained | function_call | 0% | 9.3 | 4.0 |
+| json_schema | simple_json | **100%** | 5.3 | 0 |
+| unconstrained | simple_json | **100%** | 6.3 | 0 |
+| json_schema | function_call | 0% | 6.6 | 0 |
+| unconstrained | function_call | 0% | 5.5 | 4.0 |
 
-**Local finding:** Constrained decoding guarantees correctness on well-supported schemas with only ~6% TPS overhead versus unconstrained generation. Ollama's `json_schema` backend achieves 100% validity on simple schemas.
+**Local finding:** Both constrained and unconstrained backends achieve 100% validity on simple schemas. The function_call schema remains at 0% — Ollama's constrained decoding does not yet support enum-constrained fields in complex schemas.
 
 **Cross-platform insight:** Reasoning models require explicit thinking-mode control for structured output. Ollama suppresses thinking tokens automatically when `response_format` is set. vLLM requires `chat_template_kwargs: {"enable_thinking": false}` per-request or `--default-chat-template-kwargs` server-side. Without this, guided decoding backends interleave thinking tokens with constrained output, breaking validity.
 
