@@ -32,7 +32,7 @@ class SchedulingBenchmarker:
         payload = {
             "model": self.model_name,
             "messages": [{"role": "user", "content": request.prompt}],
-            "max_tokens": self.max_tokens,
+            "max_tokens": request.max_tokens,
             "temperature": self.temperature,
             "stream": True,
         }

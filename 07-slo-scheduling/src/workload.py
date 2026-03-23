@@ -15,6 +15,7 @@ class WorkloadRequest:
     slo_seconds: float
     priority: int
     deadline: float
+    max_tokens: int = 512
 
 
 class WorkloadGenerator:
@@ -33,6 +34,7 @@ class WorkloadGenerator:
                 slo_seconds=wc.slo_seconds,
                 priority=PRIORITY_MAP.get(wc.name, 2),
                 deadline=now + wc.slo_seconds,
+                max_tokens=wc.max_tokens,
             )
             for wc in chosen
         ]

@@ -8,16 +8,19 @@ workload:
     short:
       share: 0.4
       output_tokens: 50
+      max_tokens: 64
       slo_seconds: 2.0
       prompt: "What is the capital of France? Answer in one sentence."
     medium:
       share: 0.4
       output_tokens: 200
+      max_tokens: 256
       slo_seconds: 8.0
       prompt: "Summarize the key benefits of renewable energy in 3-4 paragraphs."
     long:
       share: 0.2
       output_tokens: 500
+      max_tokens: 512
       slo_seconds: 20.0
       prompt: "Write a Python function that implements a binary search tree with insert, delete, and search operations. Include docstrings and type hints."
 

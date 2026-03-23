@@ -11,6 +11,7 @@ class WorkloadClass:
     output_tokens: int
     slo_seconds: float
     prompt: str
+    max_tokens: int = 512
 
     @classmethod
     def from_dict(cls, name: str, data: dict) -> "WorkloadClass":
@@ -20,6 +21,7 @@ class WorkloadClass:
             output_tokens=data["output_tokens"],
             slo_seconds=data["slo_seconds"],
             prompt=data["prompt"],
+            max_tokens=data.get("max_tokens", data["output_tokens"]),
         )
 
 
