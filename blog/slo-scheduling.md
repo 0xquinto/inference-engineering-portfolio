@@ -6,7 +6,9 @@ Your vLLM server does 35 tokens per second. Your dashboard is green. Your P50 la
 
 This is the throughput trap. Every inference benchmark measures tokens per second, but production systems don't fail because they're slow on average — they fail because specific requests miss their deadlines. A chatbot that responds in 1 second 60% of the time and 30 seconds 40% of the time is worse than one that consistently responds in 3 seconds.
 
-The metric that actually matters is **goodput**: the percentage of requests that meet their latency SLO. I built a scheduler that takes goodput from 70% to 100% on an L40S GPU under mixed workloads. Here's what I learned.
+The metric that actually matters is **goodput**: the percentage of requests that meet their latency SLO. This isn't a new idea — [NVIDIA's GenAI-Perf](https://docs.nvidia.com/deeplearning/triton-inference-server/archives/triton-inference-server-2591/user-guide/docs/perf_analyzer/genai-perf/docs/goodput.html) measures it, [Hugging Face has argued for it](https://huggingface.co/blog/balaatdell/benchmark-theater-to-real-performance-goodput), and systems like [QLM](https://arxiv.org/abs/2407.00047) and [SOLA](https://mlsys.org/virtual/2025/poster/3231) optimize for it. But most teams still benchmark raw TPS and call it a day.
+
+I wanted to see what happens when you actually build and measure a deadline-aware scheduler on real hardware. I implemented a proxy scheduler and took goodput from 70% to 100% on an L40S GPU under mixed workloads. Here's what I found.
 
 ## Why FCFS Breaks Under Mixed Workloads
 
@@ -28,7 +30,9 @@ FCFS and Priority both achieve 70% goodput — but look at the breakdown. Long a
 
 ## The Proxy Scheduler
 
-Instead of modifying vLLM internals, I built a lightweight proxy that sits between the client and the inference engine:
+The idea of an external scheduler that reorders requests without modifying engine internals is well-established — [QLM](https://arxiv.org/abs/2407.00047) (SoCC 2024), [SageSched](https://arxiv.org/abs/2603.07917) (2026), and projects like [llm-d](https://github.com/llm-d/llm-d-inference-scheduler) all implement variants of this. I wanted to see how far a minimal version could go — no output-length prediction, no learned ranking, just deadline urgency and load shedding.
+
+I built a lightweight proxy that sits between the client and the inference engine:
 
 ```
 Client requests → SLO Proxy (reorder + admit) → vLLM → Response
@@ -60,7 +64,7 @@ def enqueue(self, request: WorkloadRequest) -> bool:
 
 **Concurrency limiter.** Caps in-flight requests to prevent GPU memory pressure from degrading all requests simultaneously. Uses an `asyncio.Semaphore` so multiple requests can be dispatched concurrently up to the limit.
 
-The key design decision: this is a proxy, not a vLLM plugin. It works with any OpenAI-compatible backend — I run the same scheduler code on an L40S (vLLM) and an M4 MacBook Pro (Ollama). The scheduling algorithm doesn't care about the hardware.
+The key design decision: this is a proxy, not a vLLM plugin. It works with any OpenAI-compatible backend — I run the same scheduler code on an L40S (vLLM) and an M4 MacBook Pro (Ollama). This is the same pattern used by [Cube AI](https://www.ultraviolet.rs/blog/vllm-vs-ollama-in-cube-ai) and [llm-d](https://github.com/llm-d/llm-d-inference-scheduler) — the scheduling logic is backend-agnostic by design.
 
 ## The Experiment
 
@@ -86,7 +90,7 @@ FCFS and Priority both plateau at 60-70%. They serve long and medium requests fi
 
 The QPS=1 results are interesting: Priority actually scores 0% (worse than FCFS's 20%). At QPS=1, requests are sequential, and the model's thinking tokens push even short requests past their 2-second SLO. Priority can't help when there's only one request in the system. SLO-Aware scores 67% at QPS=1 because its deadline reordering kicks in as soon as multiple requests overlap.
 
-SLAI (UT Austin, 2025) reported 53% median TTFT reduction with deadline-aware scheduling. SOLA (Tsinghua, MLSys 2025) improved SLO attainment from 45% to 99%. My results align with this literature — the mechanism is sound, and a proxy-level implementation captures most of the benefit without requiring engine modifications.
+These results align with the literature. [SLAI](https://arxiv.org/abs/2508.01002) (UT Austin, 2025) reported 53% median TTFT reduction with deadline-aware scheduling. [SOLA](https://mlsys.org/virtual/2025/poster/3231) (Tsinghua, MLSys 2025) improved SLO attainment from 45% to 99% using state-aware scheduling. [SLOs-Serve](https://arxiv.org/abs/2504.08784) (CMU + Google, 2025) showed multi-SLO token allocation can handle bursty traffic. The mechanism is sound — and a minimal proxy-level implementation captures most of the benefit without requiring engine modifications or output-length prediction models.
 
 ## What I Learned
 
@@ -94,7 +98,7 @@ SLAI (UT Austin, 2025) reported 53% median TTFT reduction with deadline-aware sc
 
 **Scheduling is invisible at low load.** At QPS=1, every policy looks roughly the same. The differentiation only emerges at saturation. This is why benchmarks that test at a single load level miss the point entirely.
 
-**The proxy pattern is underrated.** A 70-line Python proxy achieved what would otherwise require forking vLLM. It's hardware-agnostic (same code on L40S and M4), engine-agnostic (works with vLLM and Ollama), and composable with any engine-level scheduling that's already running.
+**The proxy pattern is simpler than you'd expect.** Systems like QLM, SageSched, and llm-d implement sophisticated proxy schedulers with output-length prediction and learned ranking. But a minimal version — just deadline urgency and load shedding, ~70 lines of Python — achieved 100% goodput in my benchmarks. It's hardware-agnostic (same code on L40S and M4), engine-agnostic (works with vLLM and Ollama), and composable with any engine-level scheduling that's already running. You don't need a research system to get production-level SLO attainment.
 
 **Admission control is the real lever.** Deadline reordering helps, but the biggest impact comes from load shedding. Rejecting one request that can't possibly meet its SLO is better than letting it degrade three other requests that could.
 
